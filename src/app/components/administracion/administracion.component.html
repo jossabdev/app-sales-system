@@ -1,0 +1,68 @@
+<div class="body-container">
+  <h3 class="h2-color">Administración</h3>
+
+  <div class="flex flex-wrap">
+    <!-- Card categoria -->
+    <div class="card-container">
+        <p-card [style]="styleCard">
+            <ng-template pTemplate="header">
+              <div class="flex flex-row align-items-center">
+                <div mat-card-avatar class="icon">
+                  <i class="fa-solid fa-layer-group fa-sm" style="color: #f31559;"></i>
+                </div>
+                <p class="title"> {{ categoria.title}} </p>
+              </div>             
+              <hr class="card-separator">
+              <div class="flex flex-column align-items-center">
+                <p class="content">
+                  {{categoria.content}}
+                </p>              
+                <button mat-flat-button color="primary" class="btn" routerLink="/categoria">Explorar</button>
+              </div>            
+            </ng-template>
+        </p-card>
+    </div>
+  
+    <!-- Card producto-->
+    <div class="card-container">
+      <p-card [style]="styleCard">
+          <ng-template pTemplate="header">
+            <div class="flex flex-row align-items-center">
+              <div mat-card-avatar class="icon">
+                <i class="fa-solid fa-box-open fa-sm" style="color: #f31559;"></i>
+              </div>
+              <p class="title"> {{ producto.title }} </p>
+            </div>             
+            <hr class="card-separator">
+            <div class="flex flex-column align-items-center">
+              <p class="content">
+                {{ producto.content }}
+              </p>              
+              <button mat-flat-button color="primary" class="btn" routerLink="/producto">Explorar</button>
+            </div>            
+          </ng-template>
+      </p-card>
+    </div>
+  
+    <!-- Card roles-->
+    <div class="card-container">
+      <p-card [style]="styleCard">
+          <ng-template pTemplate="header">
+            <div class="flex flex-row align-items-center">
+              <div mat-card-avatar class="icon">
+                <i class="fa-solid fa-user-tie fa-sm" style="color: #f31559;"></i>
+              </div>
+              <p class="title"> {{ rol.title }} </p>
+            </div>             
+            <hr class="card-separator">
+            <div class="flex flex-column align-items-center">
+              <p class="content flex-grow-1">
+                {{ rol.content }}
+              </p>              
+              <button mat-flat-button color="primary" class="btn" routerLink="/rol">Explorar</button>
+            </div>            
+          </ng-template>
+      </p-card>
+    </div>
+  </div>
+</div>

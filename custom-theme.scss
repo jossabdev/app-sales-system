@@ -1,0 +1,58 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$primary-palette: (
+ 50: #fee4eb,
+ 100: #fdbbcc,
+ 200: #fc8eab,
+ 300: #fa608a,
+ 400: #f63c70,
+ 500: #F31559,
+ 600: #e20f56,
+ 700: #cd0852,
+ 800: #b8004f,
+ 900: #95004a,
+ contrast: (
+   50: rgba(black, 0.87),
+   100: rgba(black, 0.87),
+   200: rgba(black, 0.87),
+ )
+);
+
+$accent-palette: (
+ 50: #fde9e3,
+ 100: #ffcfb2,
+ 200: #ffb07f,
+ 300: #fc934a,
+ 400: #f87e1a,
+ 500: #f46c00,
+ 600: #ea6600,
+ 700: #dc5e00,
+ 800: #cf5600,
+ 900: #b84900,
+ contrast: (
+   50: rgba(black, 0.87),
+   100: rgba(black, 0.87),
+   200: rgba(black, 0.87),
+ )
+);
+
+$my-primary: mat.define-palette($primary-palette, 500);
+$my-accent: mat.define-palette($accent-palette, 200, 100, 400);
+
+// The "warn" palette is optional and defaults to red if not specified.
+$my-warn: mat.define-palette(mat.$red-palette);
+
+$my-theme: mat.define-light-theme((
+ color: (
+   primary: $my-primary,
+   accent: $my-accent,
+   warn: $my-warn,
+ ),
+ typography: mat.define-typography-config(),
+ density: -2,
+));
+
+@include mat.button-theme($my-theme);
+@include mat.form-field-theme($my-theme);

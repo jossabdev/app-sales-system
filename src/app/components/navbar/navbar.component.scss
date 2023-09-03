@@ -1,0 +1,30 @@
+.navbar{
+    width: 100%;
+    height: 3.5rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    background-color: #fff;
+    box-shadow: 1px 1px 2px rgba($color: #000000, $alpha: 0.10); 
+}
+
+.p-navbar-group-end{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-right: 2rem;
+}
+
+.txt-color{
+    color: #F31559;    
+}
+
+.iconclass{
+    color: #F31559;
+}
+
+::ng-deep .p-menuitem-icon{
+    color: #4D091E;
+    margin-right: 1rem;
+}

@@ -1,0 +1,219 @@
+<div class="body-container">
+    <p-toast></p-toast>
+    <div class="btn-shorcut">
+        <h3 class="h2-color">{{titulo}}</h3>
+        <div class="btn-group" *ngIf="showButtonNew">
+            <button pButton pRipple label="Nuevo inventario" icon="fa-solid fa-plus" class="p-button-text button" (click)="habilitarNuevoInventario()"></button>           
+        </div>        
+    </div>
+    <!-- Formulario de creacion -->
+    <div class="form-container" *ngIf="isNewInventario">
+        <form class="filter-form" [formGroup]="formNuevoInventario">
+            <table class="table-full-width" cellspacing="0">
+                <tr class="row">                                
+                    <td class="column">           
+                        <span class="p-float-label ">
+                            <p-dropdown id="input-estados-cat" formControlName="producto" [options]="productos" placeholder="Seleccione un producto" optionLabel="nombreProducto" inputId="float-label" class="p-inputtext-sm" [style]="{'width':'100%'}"></p-dropdown>
+                            <label for="float-label">Producto</label>
+                        </span>
+                    </td>
+                    <td class="column">
+                        <span class="p-float-label">
+                            <input id="input-producto" type="number" pInputText formControlName="stockInicial" class="p-inputtext-sm w-full"/>
+                            <label htmlFor="stockInicial">Stock Inicial *</label>
+                        </span>                    
+                    </td>                
+                    <td class="column">
+                        <span class="p-float-label">
+                            <input type="text" pInputText formControlName="estado" class="p-inputtext-sm w-full"/>
+                            <label htmlFor="estado">Estado</label>
+                        </span>                    
+                    </td> 
+                </tr>
+                <tr class="row">
+                    <div class="button-actions">
+                        <button mat-flat-button type="submit" color="primary" class="button width height" (click)="guardarInventario(); limpiarFormularioCreacion()" [disabled]="formNuevoInventario.invalid">Crear</button>
+                        <button mat-flat-button color="accent" class="button width height" (click)="limpiarFormularioCreacion()">Cancelar</button>
+                    </div>
+                </tr>
+            </table>
+        </form>
+    </div>
+    
+    <!-- Formulario de filtros de busqueda  -->
+    <div class="form-container" *ngIf="isShowInventario">
+        <form class="filter-form" [formGroup]="formBuscarInventarios">
+            <table class="table-full-width" cellspacing="0">
+                <tr class="row">      
+                    <td class="column">
+                        <span class="p-float-label">
+                            <input id="input-inventario" placeholder="Ingrese código de inventario" type="number" pInputText formControlName="idInventario" class="p-inputtext-sm w-full"/>
+                            <label htmlFor="idInventario">Código Inventario</label>
+                        </span>                   
+                    </td>          
+                    <td class="column">
+                        <span class="p-float-label">
+                            <p-dropdown id="input-productos" formControlName="producto" [options]="productos" placeholder="Seleccione un producto" optionLabel="nombreProducto" inputId="float-label" class="p-inputtext-sm" [style]="{'width':'100%'}"></p-dropdown>
+                            <label for="float-label">Producto</label>
+                        </span>                   
+                    </td>      
+                    <td class="column"> 
+                        <span class="p-float-label ">
+                            <p-dropdown id="input-estados-cat" formControlName="estado" [options]="estados" placeholder="Seleccione un estado" optionLabel="valor" inputId="float-label" class="p-inputtext-sm" [style]="{'width':'100%'}"></p-dropdown>
+                            <label for="float-label">Estados</label>
+                        </span>                    
+                    </td> 
+                </tr>
+                <tr class="row">
+                    <div class="button-actions">
+                        <button mat-flat-button type="submit" color="primary" class="button width height" (click)="buscarInventariosPorFiltros()">Buscar</button>
+                        <button mat-flat-button color="accent" class="button width height" (click)="limpiarFormularioBusqueda()">Limpiar</button>
+                    </div>
+                </tr>
+            </table>
+        </form>
+    </div>
+    
+    
+    <div class="card" *ngIf="isShowInventario">
+        <p-toast></p-toast>
+        <p-table #dt
+                 [value]="inventarios" 
+                 [paginator]="true"
+                 [rows]="5"
+                 [rowHover]="true"
+                 dataKey="idInventario"
+                 [showCurrentPageReport]="true"
+                 [tableStyle]="{ 'min-width': '50rem',  }" class="p-datatable-sm"
+                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                 [rowsPerPageOptions]="[5, 10, 15]">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width:10%;"><div class="th-text-color">Código</div></th>
+                    <th style="width:25%;"><div class="th-text-color">Producto</div></th>
+                    <th style="width:18%;"><div class="th-text-color">Cantidad Vendidos</div></th>
+                    <th style="width:12%;"><div class="th-text-color">Disponibles</div></th>
+                    <th style="width:9%;"><div class="th-text-color">Estado</div></th>
+                    <th style="width:17%; text-align: center;"><div class="th-text-color">Acciones</div></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-inventario>
+                <tr>
+                    <td>{{ inventario.idInventario }}</td>
+                    <td>{{ inventario.producto.nombreProducto }}</td>
+                    <td>{{ inventario.cantidadVendidos }}</td>
+                    <td>{{ inventario.stockTotal }}</td>
+                    <td><p-tag [value]="getSeverityText(inventario.stockTotal)" [severity]="getSeverity(inventario.stockTotal)"></p-tag></td> 
+                    <td style="text-align: center;">
+                        <button pButton pRipple icon="pi pi-search" class="p-button-rounded p-button-text p-button-info" (click)="verInventarioDetalle(inventario)"></button>
+                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-success" (click)="editarInventario(inventario)"></button>
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" (click)="eliminarInventario(inventario)"></button>
+                    </td>                
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    
+    
+    <!-- vista edición -->
+    <p-dialog [(visible)]="inventarioDialog" [style]="isShowInventarioDetalle ? { width: '38rem', height: '29rem' }: { width: '38rem', height: '33rem' }" header="Detalle de inventario" [modal]="true"  [draggable]="false" [resizable]="false" styleClass="p-fluid" (onHide)="cancel()">
+        <ng-template pTemplate="content">
+            <form class="filter-form" [formGroup]="isShowInventarioDetalle ? formVerInventario : formEditarInventario">
+                <table class="table-full-width" cellspacing="0">
+                    <tr class="row">      
+                        <td class="column">
+                            <span class="p-float-label">
+                                <input id="input-inventario-show" type="number" pInputText formControlName="idInventario" class="p-inputtext-sm w-full" />
+                                <label htmlFor="idInventario" placeholder="Código Inventario">Código Inventario</label>
+                            </span>
+                        </td>  
+                        <td class="column">           
+                            <span class="p-float-label">
+                                <input id="input-inventario-show" type="text" pInputText formControlName="producto" class="p-inputtext-sm w-full"/>
+                                <label htmlFor="float-label">Producto</label>
+                            </span>
+                        </td>         
+                        <td class="column">
+                            <span class="p-float-label">
+                                <input id="input-inventario-show" type="number" pInputText formControlName="stockInicial" class="p-inputtext-sm w-full"/>
+                                <label htmlFor="stockInicial">Stock Inicial</label>
+                            </span>
+                        </td>       
+                        
+                        <td class="column">
+                            <span class="p-float-label">
+                                <input id="input-inventario-show" type="number" pInputText formControlName="stockTotal" class="p-inputtext-sm w-full"/>
+                                <label htmlFor="stockTotal">Stock total</label>
+                            </span>                                       
+                        </td>
+    
+                        <td class="column">
+                            <span class="p-float-label">
+                                <input id="input-inventario-show" type="number" pInputText formControlName="cantidadIngresados" class="p-inputtext-sm w-full"/>
+                                <label htmlFor="cantidadIngresados">Cantidad ingresados</label>
+                            </span>                    
+                        </td>
+                        <td class="column">
+                            <span class="p-float-label">
+                                <input id="input-inventario-show" type="number" pInputText formControlName="cantidadVendidos" class="p-inputtext-sm w-full"/>
+                                <label htmlFor="cantidadVendidos">Cantidad Vendidos</label>
+                            </span>                                       
+                        </td>
+                        
+                        <td class="column-2">                    
+                            <span class="p-float-label" *ngIf="isShowInventarioDetalle">
+                                <p-dropdown appendTo="body" id="input-estados-cat" formControlName="estado" [options]="estados" optionLabel="valor" inputId="float-label" class="p-inputtext-sm" [style]="{'width':'100%'}"></p-dropdown>
+                                <label for="float-label">Estados</label>
+                            </span>                        
+                        </td> 
+                    </tr>               
+                </table>
+    
+                <p-divider align="center" *ngIf="isEditInventarioDetalle">
+                    <span class="p-tag btn-color">Editar inventario</span>
+                </p-divider>
+                <td class="column" *ngIf="isEditInventarioDetalle">                        
+                    <span class="p-float-label">
+                        <p-inputNumber formControlName="cantidadIngresados" placeholder="Ingrese cantidad" [showButtons]="true" inputId="minmax-buttons" [min]="0" [max]="100"  incrementButtonClass="p-button-danger btn-color" decrementButtonClass="p-button-warning" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"></p-inputNumber>
+                        <label htmlFor="cantidad">Agregar más unidades</label>
+                    </span>
+                </td>
+                 
+                
+            </form>
+            
+        </ng-template>
+    
+        <ng-template pTemplate="footer">
+            <div class="flex justify-content-center" *ngIf="isEditInventarioDetalle; else templateElse">
+                <button pButton pRipple label="Actualizar" icon="pi pi-check" class="p-button-text btn-color" (click)="ejecutarEditarInventario()"></button>
+                <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text btn-color-cancel" (click)="ocultarDialog()"></button>            
+            </div>
+            <ng-template #templateElse>
+                <div class="flex justify-content-center"><button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text btn-color" (click)="ocultarDialog()"></button></div>
+            </ng-template>
+            
+        </ng-template>
+    </p-dialog>
+    
+    <p-confirmDialog #cd [style]="{ width: '30rem' }">
+    
+        <ng-template pTemplate="footer">
+            <div class="flex justify-content-center">
+                <button type="button" pButton 
+                icon="pi pi-check" label="Aceptar"
+                class="p-button-text btn-color"
+                (click)="cd.accept()">
+            </button>
+    
+            <button type="button" pButton 
+                icon="pi pi-times" label="Cancelar" 
+                class="p-button-text btn-color-cancel"
+                (click)="cd.reject()">
+            </button>
+            </div>
+            
+        </ng-template>
+    </p-confirmDialog>
+    
+</div>

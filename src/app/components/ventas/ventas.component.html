@@ -1,0 +1,208 @@
+<div class="body-container">
+    <div class="btn-shorcut">
+        <h3 class="h3-color">Ventas</h3>
+        <div class="btn-group" *ngIf="!realizandoVenta">
+            <button pButton pRipple label="Venta rápida" icon="fa-solid fa-circle-dollar-to-slot" class="p-button-text button" (click)="habilitarVentaRapida()"></button>
+            <button pButton pRipple label="Venta normal" icon="fa-solid fa-cart-plus" class="p-button-text button"></button>
+        </div>
+    </div>
+    
+    <div class="venta-rapida-container" *ngIf="esVentaRapida">
+        <form [formGroup]="formVentaRapida" class="filter-form p-fluid">
+            <table class="table-full-width" cellspacing="0">
+                <tr class="row">      
+                    <td class="column">
+                        <span class="p-float-label">
+                            <p-dropdown id="input-productos" formControlName="producto" [options]="productos" placeholder="Seleccione un producto" optionLabel="nombreProducto" inputId="float-label" class="p-inputtext-sm" [style]="{'width':'100%'}"></p-dropdown>
+                            <label for="float-label">Producto</label>
+                        </span>                   
+                    </td>
+                    <td class="column">
+                        <span class="p-float-label">
+                            <input id="input-producto" type="text" pInputText formControlName="codigoBarras" class="p-inputtext-sm w-full"/>
+                            <label htmlFor="codigoBarras">Código de barras</label>
+                        </span>                                       
+                    </td>
+                </tr>
+                <tr class="row"> 
+                    <div class="button-actions">
+                        <button mat-flat-button type="submit" color="primary" class="button width height" (click)="realizarVentaRapida()">Vender</button>                       
+                        <button mat-flat-button color="accent" class="button width height btn-2" (click)="salirVenta()">Salir</button>
+                    </div>
+                </tr>
+            </table>
+        </form>
+    </div>
+
+    <div class="venta-normal-container" *ngIf="esVentaNormal">
+
+    </div>
+
+    <!-- Formulario de filtros de busqueda  -->
+    <div class="form-container" *ngIf="esShowVenta">
+        <form [formGroup]="formBuscarVentas" class="filter-form p-fluid">
+            <table class="table-full-width" cellspacing="0">
+                <tr class="row">      
+                    <td class="column">
+                        <span class="p-float-label">
+                            <input id="input-venta" placeholder="Ingrese código de venta" type="number" pInputText formControlName="idVenta" class="p-inputtext-sm w-full"/>
+                            <label htmlFor="idVenta">Código de venta</label>
+                        </span>                   
+                    </td>          
+                    <td class="column">
+                        <span class="p-float-label">
+                            <input id="input-venta" type="text" pInputText formControlName="vendedor" class="p-inputtext-sm w-full"/>
+                            <label htmlFor="vendedor">Vendedor</label>
+                        </span>                    
+                    </td>
+                
+                    <td class="column">
+                        <span class="p-float-label">
+                            <input id="input-venta" type="text" pInputText formControlName="cliente" class="p-inputtext-sm w-full"/>
+                            <label htmlFor="cliente">Cliente</label>
+                        </span>
+                    </td>
+    
+                    <td class="column">
+                        <span class="p-float-label">
+                            <p-calendar formControlName="fechaVenta" placeholder="Escoja un rango de fechas" selectionMode="range" dateFormat="yy-mm-dd" [readonlyInput]="true" class="p-inputtext-sm w-full" [showIcon]="true"  [showTime]="true" [showSeconds]="true"></p-calendar>                  
+                            <label htmlFor="fechaVenta">Fecha Venta</label>
+                        </span>
+                        
+                    </td>
+                
+                    <td class="column"> 
+                        <span class="p-float-label ">
+                            <p-dropdown id="input-estados-cat" formControlName="estado" [options]="estados" placeholder="Seleccione un estado" optionLabel="valor" inputId="float-label" class="p-inputtext-sm" [style]="{'width':'100%'}"></p-dropdown>
+                            <label for="float-label">Estados</label>
+                        </span>                    
+                    </td> 
+                </tr>
+                <tr class="row"> 
+                    <div class="button-actions">
+                        <button mat-flat-button type="submit" color="primary" class="button width height" (click)="buscarVentasPorFiltros()">Buscar</button>
+                        <button mat-flat-button color="accent" class="button width height btn-2" (click)="limpiarFormularioBusqueda()">Limpiar</button>
+                    </div>
+                </tr>
+            </table>
+        </form>
+    </div>
+    
+    
+    <div class="card" *ngIf="esShowVenta  || esVentaRapida">
+        <p-toast></p-toast>
+        <p-table #dt
+                 [value]="ventas"
+                 [paginator]="true"
+                 [rows]="5"
+                 [rowHover]="true"
+                 dataKey="idVenta"
+                 [showCurrentPageReport]="true"
+                 [tableStyle]="{ 'min-width': '50rem',  }" class="p-datatable-sm"
+                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                 [rowsPerPageOptions]="[5, 10, 15]">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width:7%;"><div class="th-text-color">Código</div></th>
+                    <th style="width:15%;"><div class="th-text-color">Vendedor</div></th>
+                    <th style="width:15%;"><div class="th-text-color">Cliente</div></th>
+                    <th style="width:15%;"><div class="th-text-color">Total</div></th>
+                    <th style="width:18%;"><div class="th-text-color">Fecha de Venta</div></th>
+                    <th style="width:10%;"><div class="th-text-color">Estado</div></th>
+                    <th style="width:20%; text-align: center;"><div class="th-text-color">Acciones</div></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-venta>
+                <tr>
+                    <td>{{ venta.idVenta }}</td>
+                    <td>{{ venta.vendedor }}</td>
+                    <td>{{ venta.cliente }}</td>
+                    <td>{{ venta.total | currency: 'USD' }}</td>
+                    <td>{{ venta.fechaVenta }} </td>
+                    <td>{{ venta.estado }}</td> 
+                    <td style="text-align: center;">
+                        <button pButton pRipple icon="pi pi-search" class="p-button-rounded p-button-text p-button-info" (click)="verDetalleVenta(venta)"></button>
+                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-success" (click)="editarVenta(venta)"></button>
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" (click)="eliminarVenta(venta)"></button>
+                    </td>                
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+
+<!-- vista edición -->
+<p-dialog [(visible)]="ventaDialog" [style]="{ width: '65rem', height: 'auto' }" [header]="header" [modal]="true"  [draggable]="false" [resizable]="false" styleClass="p-fluid fondo" (onHide)="cancel()">
+    <ng-template pTemplate="content">
+        <!-- Formulario Cabecera -->
+        <h4 class="titulo-h4">Información general: </h4>
+        <div class="card-table">            
+            <p-table [value]="ventaShow" [tableStyle]="{ 'min-width': '50rem' }" class="p-datatable-lg">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Código</th>
+                        <th>Vendedor</th>
+                        <th>Cliente</th>
+                        <th>Subtotal</th>
+                        <th>Iva 12%</th>
+                        <th>Descuento</th>
+                        <th>Total</th>
+                        <th>Fecha de venta</th>
+                        <th>Estado</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-venta>
+                    <tr>
+                        <td>{{ venta.idVenta }}</td>
+                        <td>{{ venta.vendedor }}</td>
+                        <td>{{ venta.cliente }}</td>
+                        <td>{{ venta.subtotal | currency: 'USD' }}</td>
+                        <td>{{ venta.iva | currency: 'USD' }}</td>
+                        <td>{{ venta.descuento | currency: 'USD' }}</td>
+                        <td>{{ venta.total | currency: 'USD' }}</td>
+                        <td>{{ venta.fechaVenta }}</td>
+                        <td>{{ venta.estado  }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+       </div>
+       <h4 class="titulo-h4">Detalle de productos vendidos: </h4>
+       <div class="card-table">        
+        <p-table [value]="detalleVenta!" [tableStyle]="{ 'min-width': '50rem' }">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Código detalle</th>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Valor unitario</th>
+                    <th>Valor total</th>
+                    <th>Estado</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-detalle>
+                <tr>
+                    <td>{{ detalle.idVentaDet }}</td>
+                    <td>{{ detalle.producto.nombreProducto }}</td>
+                    <td>{{ detalle.cantidad }}</td>
+                    <td>{{ detalle.valorUnitario | currency: 'USD' }}</td>
+                    <td>{{ detalle.valorTotal | currency: 'USD' }}</td>
+                    <td>{{ detalle.estado }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+       </div>
+        
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-center" *ngIf="isEditVentaDetalle; else templateElse">
+            <button pButton pRipple label="Actualizar" icon="pi pi-check" class="p-button-text btn-color" (click)="ejecutarEditarVenta()"></button>
+            <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text btn-color-cancel" (click)="ocultarDialog()"></button>            
+        </div>
+        <ng-template #templateElse>
+            <div class="flex justify-content-center"><button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text btn-color" (click)="ocultarDialog()"></button></div>
+        </ng-template>
+        
+    </ng-template>
+</p-dialog>
+

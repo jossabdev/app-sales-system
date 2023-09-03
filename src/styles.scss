@@ -1,1 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
+@import "primeflex/primeflex.css";
+@import "primeicons/primeicons.css";
+
+html, body { height: 100%; }
+body { 
+    margin: 0px; 
+    padding: 0px; 
+    background: #FCF9F9; 
+    overflow: hidden;
+}
+.body-container{
+    padding-left: 2rem;
+    padding-bottom: 5rem;
+}

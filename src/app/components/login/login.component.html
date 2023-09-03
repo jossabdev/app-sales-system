@@ -1,0 +1,28 @@
+<div class="body-container">
+    <div class="card flex flex-column justify-content-center">
+        <form [formGroup]="loginFormGroup">
+            <span class="p-float-label text-margin">
+                <input id="input-text" type="text" pInputText formControlName="username" class="p-inputtext w-full" required="true"/>
+                <label htmlFor="username">Usuario</label>
+            </span>
+            <span class="p-float-label text-margin">
+                <input id="input-text" type="password" pInputText formControlName="password" class="p-inputtext w-full" required="true"/>
+                <label htmlFor="password">Contraseña</label>
+            </span>
+            <div class="flex justify-content-center"><button pButton pRipple label="Iniciar sesión" icon="pi pi-check" class="text-margin p-button-text btn-color" [disabled]="loginFormGroup.invalid" (click)="ejecutarLogin()"></button></div>
+        </form>    
+    </div>
+    
+    <p-confirmDialog #cd [style]="{ width: '30rem' } " (onHide)="cancel()">
+    
+        <ng-template pTemplate="footer">
+            <div class="flex justify-content-center">
+                <button type="button" pButton 
+                    icon="pi pi-check" label="Aceptar"
+                    class="p-button-text btn-color"
+                    (click)="cd.accept()">
+                </button>
+            </div>        
+        </ng-template>
+    </p-confirmDialog>
+</div>

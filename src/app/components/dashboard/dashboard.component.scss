@@ -1,0 +1,88 @@
+.container{
+    display: flex;    
+}
+
+.card-container {
+    background: transparent; 
+    
+    .card-title{
+        font-size: 1.2rem;
+        color: rgba($color: #000000, $alpha: 0.66);
+        font-weight: 500;            
+    }
+
+    .card-body{
+        font-size: 1.6rem;
+        font-weight: 500;
+        height: 4.5vh;
+    }
+
+}
+
+.text-color{
+    color: #F31559;
+}
+
+::ng-deep .p-divider.p-divider-horizontal{
+    margin: 0.4rem 0;
+}
+
+.label-ventas{
+    font-size: smaller;
+}
+
+.chart-container {
+    position: relative;    
+    display: flex;
+    flex-direction: column;           
+    box-shadow: 1px 2px 4px rgba($color: #000000, $alpha: 0.15); 
+    background-color: white;
+    border-radius: 1.3rem;
+    margin: 0 2rem 2rem 0;
+    padding: 0.9rem 0rem 0.9rem 2rem ;
+    height: 45vh;
+}
+
+.h2-color{
+    color: #F31559;
+}
+
+.icono-color{
+    color: #F31559;
+}
+
+.descripcion{
+    font-size: smaller;
+    overflow: hidden;
+}
+
+.calendar-width{
+    width: 14.2rem;
+}
+
+.group-button{
+    margin-right: 2rem ;
+}
+
+.btn-shorcut{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.btn-group{
+    display: flex;
+    flex-direction: row;    
+    align-items: center;
+    justify-content: center;
+    margin-right: 2rem;
+}
+
+.button{
+    margin-left: 1rem;    
+    background-color: #F31559;
+    color: #fff;    
+    height: 2.3rem;
+    border-radius: 1.5rem;
+    font-size: smaller;
+}

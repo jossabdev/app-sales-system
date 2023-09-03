@@ -1,0 +1,32 @@
+export const paths = {
+    consultarPor: '/consultarPor',
+    categorias: '/categorias',
+    guardarCategoria: '/guardarCategoria',    
+    actualizarCategoria: '/actualizarCategoria',
+    eliminarCategoria: '/eliminarCategoria',
+    productos: '/productos',
+    guardarProducto: '/guardarProducto',    
+    actualizarProducto: '/actualizarProducto',
+    eliminarProducto: '/eliminarProducto',
+    inventarios: '/inventarios',
+    guardarInventario: '/guardarInventario',    
+    actualizarInventario: '/actualizarInventario',
+    eliminarInventario: '/eliminarInventario',
+    ventas: '/ventas',
+    guardarVenta: '/guardarVenta',    
+    actualizarVenta: '/actualizarVenta',
+    eliminarVenta: '/eliminarVenta',
+    detalleVentas: '/detalleVentas',
+    guardarDetalleVenta: '/guardarDetalleVenta',    
+    actualizarDetalleVenta: '/actualizarDetalleVenta',
+    eliminarDetalleVenta: '/eliminarDetalleVenta',
+
+    login: '/auth/login',
+
+    obtenerTotalDeVentas: '/obtenerTotalDeVentas',
+    obtenerTotalDeGanancias: '/obtenerTotalDeGanancias',
+    obtenerProductoTop: '/obtenerProductoTop',
+    obtenerEstadisticasVentasPorOpcion: '/obtenerEstadisticasVentasPorOpcion',
+    consultarPorRangoFecha: '/consultarPorRangoFecha',
+    obtenerTodosLosProductosEnStock: '/obtenerTodosLosProductosEnStock'
+}

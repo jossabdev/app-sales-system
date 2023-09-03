@@ -1,0 +1,34 @@
+<div class="sidenav" [ngClass]="collapsed ? 'sidenav-collapsed': ''">
+    <div class="logo-container">
+        <button class="logo" (click)="toggleCollapse()">SS</button>
+        <div class="logo-text" *ngIf="collapsed">Sales System</div>
+        <button class="btn-close" *ngIf="collapsed" (click)="closeSidenav()">
+            <i class="fa-times fa-solid fa-xmark"></i>
+        </button>
+    </div>
+    <div>
+        <ul class="sidenav-nav">
+            <li class="sidenav-nav-item" *ngFor="let data of navData; index as idx">
+                <a class="sidenav-nav-link" [routerLink]="[data.routelink]"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{exact: true}"
+                >
+                    <i class="sidenav-link-icon" [class]="data.icon"></i>
+                    <span class="sidenav-link-text" *ngIf="collapsed">{{data.label}}</span>
+                </a>
+            </li>
+        </ul>
+    </div>    
+    <div class="footer-nav flex flex-column justify-content-end">
+       <!-- <a class="footer-nav-link align-self-center"  routerLink="settings" routerLinkActive="active"
+        [routerLinkActiveOptions]="{exact: true}">
+            <i class="pi pi-cog i-color" style="font-size: 1.2rem" ></i>
+            <span class="footer-nav-link-text" *ngIf="collapsed">Configuración</span>
+        </a>-->
+        <a class="footer-nav-link sidenav-nav-link align-self-center" routerLink="about" routerLinkActive="active"
+        [routerLinkActiveOptions]="{exact: true}">
+            <i class="pi pi-info-circle i-color" style="font-size: 1.2rem;" ></i>
+            <span class="footer-nav-link-text" *ngIf="collapsed">Acerca de</span>
+        </a>
+    </div>
+</div>
