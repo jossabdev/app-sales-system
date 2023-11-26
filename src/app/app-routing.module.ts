@@ -11,20 +11,27 @@ import { RolComponent } from './components/administracion/rol/rol.component';
 import { LoginComponent } from './components/login/login.component';
 import { AboutComponent } from './components/sidenav/about/about.component';
 import { SettingsComponent } from './components/sidenav/settings/settings.component';
+import { AuthGuard, HasRole } from './services/auth-guard.service';
+import { PrivateContentComponent } from './components/private-content/private-content.component';
 
-const routes: Routes = [
-  {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
-  {path: 'dashboard', component: DashboardComponent},
-  {path: 'administracion', component: AdministracionComponent },
-  {path: 'categoria', component: CategoriaComponent },  
-  {path: 'producto', component: ProductoComponent },
-  {path: 'rol', component: RolComponent },  
-  {path: 'inventario', component: InventarioComponent},
-  {path: 'ventas', component: VentasComponent},
-  {path: 'usuarios', component: UsuariosComponent},
-  {path: 'login', component: LoginComponent},
-  {path: 'settings', component: SettingsComponent },
-  {path: 'about', component: AboutComponent }
+const routes: Routes = [    
+  {path: 'login', component: LoginComponent},  
+  {
+    path: '', component: PrivateContentComponent,
+    children: [
+      {path: '', redirectTo: 'dashboard', pathMatch: 'full', canMatch: [HasRole]},
+      {path: 'dashboard', component: DashboardComponent ,  canActivate: [AuthGuard], canMatch: [HasRole]},
+      {path: 'administracion', component: AdministracionComponent ,  canActivate: [AuthGuard], canMatch: [HasRole]},
+      {path: 'categoria', component: CategoriaComponent ,  canActivate: [AuthGuard], canMatch: [HasRole]},  
+      {path: 'producto', component: ProductoComponent ,  canActivate: [AuthGuard], canMatch: [HasRole]},
+      {path: 'rol', component: RolComponent ,  canActivate: [AuthGuard], canMatch: [HasRole]},  
+      {path: 'inventario', component: InventarioComponent,  canActivate: [AuthGuard],},
+      {path: 'ventas', component: VentasComponent,  canActivate: [AuthGuard],},
+      {path: 'usuarios', component: UsuariosComponent,  canActivate: [AuthGuard], canMatch: [HasRole]},      
+      {path: 'settings', component: SettingsComponent,  canActivate: [AuthGuard], },
+      {path: 'about', component: AboutComponent,  canActivate: [AuthGuard], }
+    ]
+  }  
 ];
 
 @NgModule({

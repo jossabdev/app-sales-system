@@ -6,7 +6,5 @@ export enum Estados {
 
 export enum EstadosVenta {
     activo = 'Activo',
-    anulado = 'Anulado',
-    modificado = 'Modificado',
-    eliminado = 'Eliminado'
+    anulado = 'Anulado'
 }

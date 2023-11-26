@@ -2,18 +2,18 @@
     <p-toast></p-toast>
     <div class="btn-shorcut">
         <h3 class="h2-color">{{titulo}}</h3>
-        <div class="btn-group" *ngIf="showButtonNew">
+        <div class="btn-group" *ngIf="showButtonNew && onlyRoleAdmin">
             <button pButton pRipple label="Nuevo inventario" icon="fa-solid fa-plus" class="p-button-text button" (click)="habilitarNuevoInventario()"></button>           
         </div>        
     </div>
     <!-- Formulario de creacion -->
-    <div class="form-container" *ngIf="isNewInventario">
+    <div class="form-container" *ngIf="isNewInventario && onlyRoleAdmin">
         <form class="filter-form" [formGroup]="formNuevoInventario">
             <table class="table-full-width" cellspacing="0">
                 <tr class="row">                                
                     <td class="column">           
                         <span class="p-float-label ">
-                            <p-dropdown id="input-estados-cat" formControlName="producto" [options]="productos" placeholder="Seleccione un producto" optionLabel="nombreProducto" inputId="float-label" class="p-inputtext-sm" [style]="{'width':'100%'}"></p-dropdown>
+                            <p-dropdown id="input-estados-cat" formControlName="producto" [options]="productos" placeholder="Seleccione un producto" optionLabel="nombreProducto" inputId="float-label" class="p-inputtext-sm" [style]="{'width':'100%'}" [filter]="true" filterBy="nombreProducto"></p-dropdown>
                             <label for="float-label">Producto</label>
                         </span>
                     </td>
@@ -32,7 +32,7 @@
                 </tr>
                 <tr class="row">
                     <div class="button-actions">
-                        <button mat-flat-button type="submit" color="primary" class="button width height" (click)="guardarInventario(); limpiarFormularioCreacion()" [disabled]="formNuevoInventario.invalid">Crear</button>
+                        <button mat-flat-button type="submit" color="primary" class="button width height" (click)="guardarInventario(); " [disabled]="formNuevoInventario.invalid">Crear</button>
                         <button mat-flat-button color="accent" class="button width height" (click)="limpiarFormularioCreacion()">Cancelar</button>
                     </div>
                 </tr>
@@ -53,7 +53,7 @@
                     </td>          
                     <td class="column">
                         <span class="p-float-label">
-                            <p-dropdown id="input-productos" formControlName="producto" [options]="productos" placeholder="Seleccione un producto" optionLabel="nombreProducto" inputId="float-label" class="p-inputtext-sm" [style]="{'width':'100%'}"></p-dropdown>
+                            <p-dropdown id="input-productos" formControlName="producto" [options]="productos" placeholder="Seleccione un producto" optionLabel="nombreProducto" inputId="float-label" class="p-inputtext-sm" [style]="{'width':'100%'}" [filter]="true" filterBy="nombreProducto"></p-dropdown>
                             <label for="float-label">Producto</label>
                         </span>                   
                     </td>      
@@ -76,7 +76,6 @@
     
     
     <div class="card" *ngIf="isShowInventario">
-        <p-toast></p-toast>
         <p-table #dt
                  [value]="inventarios" 
                  [paginator]="true"
@@ -93,7 +92,7 @@
                     <th style="width:25%;"><div class="th-text-color">Producto</div></th>
                     <th style="width:18%;"><div class="th-text-color">Cantidad Vendidos</div></th>
                     <th style="width:12%;"><div class="th-text-color">Disponibles</div></th>
-                    <th style="width:9%;"><div class="th-text-color">Estado</div></th>
+                    <th style="width:9%;"><div class="th-text-color">Status</div></th>
                     <th style="width:17%; text-align: center;"><div class="th-text-color">Acciones</div></th>
                 </tr>
             </ng-template>
@@ -106,8 +105,8 @@
                     <td><p-tag [value]="getSeverityText(inventario.stockTotal)" [severity]="getSeverity(inventario.stockTotal)"></p-tag></td> 
                     <td style="text-align: center;">
                         <button pButton pRipple icon="pi pi-search" class="p-button-rounded p-button-text p-button-info" (click)="verInventarioDetalle(inventario)"></button>
-                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-success" (click)="editarInventario(inventario)"></button>
-                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" (click)="eliminarInventario(inventario)"></button>
+                        <button *ngIf="onlyRoleAdmin" pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-success" (click)="editarInventario(inventario)"></button>
+                        <button *ngIf="onlyRoleAdmin" pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" (click)="eliminarInventario(inventario)"></button>
                     </td>                
                 </tr>
             </ng-template>
@@ -116,7 +115,7 @@
     
     
     <!-- vista edición -->
-    <p-dialog [(visible)]="inventarioDialog" [style]="isShowInventarioDetalle ? { width: '38rem', height: '29rem' }: { width: '38rem', height: '33rem' }" header="Detalle de inventario" [modal]="true"  [draggable]="false" [resizable]="false" styleClass="p-fluid" (onHide)="cancel()">
+    <p-dialog [(visible)]="inventarioDialog" [style]="isShowInventarioDetalle ? { width: '38rem', height: '30rem' }: { width: '38rem', height: '38rem' }" header="Detalle de inventario" [modal]="true"  [draggable]="false" [resizable]="false" styleClass="p-fluid" (onHide)="cancel()">
         <ng-template pTemplate="content">
             <form class="filter-form" [formGroup]="isShowInventarioDetalle ? formVerInventario : formEditarInventario">
                 <table class="table-full-width" cellspacing="0">
@@ -161,9 +160,9 @@
                         </td>
                         
                         <td class="column-2">                    
-                            <span class="p-float-label" *ngIf="isShowInventarioDetalle">
-                                <p-dropdown appendTo="body" id="input-estados-cat" formControlName="estado" [options]="estados" optionLabel="valor" inputId="float-label" class="p-inputtext-sm" [style]="{'width':'100%'}"></p-dropdown>
-                                <label for="float-label">Estados</label>
+                            <span class="p-float-label">
+                                <input type="text" pInputText formControlName="estado" class="p-inputtext-sm w-full"/>
+                                <label htmlFor="estado">Estado</label>
                             </span>                        
                         </td> 
                     </tr>               
@@ -172,12 +171,21 @@
                 <p-divider align="center" *ngIf="isEditInventarioDetalle">
                     <span class="p-tag btn-color">Editar inventario</span>
                 </p-divider>
-                <td class="column" *ngIf="isEditInventarioDetalle">                        
-                    <span class="p-float-label">
-                        <p-inputNumber formControlName="cantidadIngresados" placeholder="Ingrese cantidad" [showButtons]="true" inputId="minmax-buttons" [min]="0" [max]="100"  incrementButtonClass="p-button-danger btn-color" decrementButtonClass="p-button-warning" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"></p-inputNumber>
-                        <label htmlFor="cantidad">Agregar más unidades</label>
-                    </span>
-                </td>
+                <div class="agregar-quitar-input">
+                    <td class="column" *ngIf="isEditInventarioDetalle">                        
+                        <span class="p-float-label">
+                            <p-inputNumber formControlName="nuevaCantidadIngresados" placeholder="Ingrese cantidad" [showButtons]="true" inputId="minmax-buttons" [min]="0"   incrementButtonClass="p-button-danger btn-color" decrementButtonClass="p-button-warning" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" (onInput)="deshabilitarHabilitarAgregarUnidades($event)"></p-inputNumber>
+                            <label htmlFor="cantidad">Agregar más unidades</label>
+                        </span>
+                    </td>
+                    <td class="column" *ngIf="isEditInventarioDetalle">                        
+                        <span class="p-float-label">
+                            <p-inputNumber formControlName="nuevaCantidadQuitados" placeholder="Ingrese cantidad" [showButtons]="true" inputId="minmax-buttons" [min]="0" incrementButtonClass="p-button-danger btn-color" decrementButtonClass="p-button-warning" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" (onInput)="deshabilitarHabilitarQuitarUnidades($event)"></p-inputNumber>
+                            <label htmlFor="cantidad">Quitas unidades</label>
+                        </span>
+                    </td>
+                </div>
+                
                  
                 
             </form>

@@ -11,12 +11,12 @@ export const navbarData = [
     },
     {
         routelink: 'inventario',
-        icon: 'fa-solid fa-box',
+        icon: 'fa-solid fa-clipboard-list',
         label: 'Inventario'
     },
     {
         routelink: 'ventas',
-        icon: 'fa-solid fa-tags',
+        icon: 'fa-solid fa-circle-dollar-to-slot',
         label: 'Ventas'
     },
     {

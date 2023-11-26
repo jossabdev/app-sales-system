@@ -30,6 +30,10 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { ToolbarModule } from 'primeng/toolbar';
 import { AvatarModule } from 'primeng/avatar';
 import { MenuModule } from 'primeng/menu';
+import { CheckboxModule } from 'primeng/checkbox';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { ScrollPanelModule } from 'primeng/scrollpanel';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -48,6 +52,7 @@ import { LoginComponent } from './components/login/login.component';
 import { AboutComponent } from './components/sidenav/about/about.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { SettingsComponent } from './components/sidenav/settings/settings.component';
+import { PrivateContentComponent } from './components/private-content/private-content.component';
 
 @NgModule({
   declarations: [
@@ -65,7 +70,8 @@ import { SettingsComponent } from './components/sidenav/settings/settings.compon
     LoginComponent,
     AboutComponent,
     NavbarComponent,
-    SettingsComponent
+    SettingsComponent,
+    PrivateContentComponent
   ],
   imports: [
     BrowserModule,
@@ -100,7 +106,11 @@ import { SettingsComponent } from './components/sidenav/settings/settings.compon
     OverlayPanelModule,
     ToolbarModule,
     AvatarModule,
-    MenuModule
+    MenuModule,
+    CheckboxModule,
+    InputSwitchModule,
+    ScrollPanelModule,
+    TooltipModule
   ],
   providers: [],
   bootstrap: [AppComponent]

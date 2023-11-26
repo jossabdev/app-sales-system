@@ -38,6 +38,10 @@ export class ProductoService {
     return this._httpClient.post<GenericListResponse<Producto>>(this.endpoint +  `${paths.consultarPor}`, producto, {headers: this.httpHeader});
   }
 
+  getByBarCode(producto: Producto) : any{
+    return this._httpClient.post<GenericListResponse<Producto>>(this.endpoint +  `${paths.obtenerProductoEnStockPorCodigoBarras}`, producto, {headers: this.httpHeader});
+  }
+
   getAll(){    
     return this._httpClient.get<GenericListResponse<Producto>>(this.endpoint, { headers: this.httpHeader } )
     .pipe(

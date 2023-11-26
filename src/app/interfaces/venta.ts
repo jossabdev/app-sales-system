@@ -15,13 +15,15 @@ export interface Venta{
 
 export interface ConsultaVentas{
     fechaDesde: string,
-    fechaHasta: string
+    fechaHasta: string,
+    vendedor?: string,
 }
 
 export interface ConsultaVentasResponse{
     totalVentas?: number,
     totalGanancias?: number,
     productoTop?: string,
+    totalInversion?: number
 }
 
 export interface EstadisticaVentaResponse{

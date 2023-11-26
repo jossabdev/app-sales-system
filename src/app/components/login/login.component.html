@@ -1,15 +1,21 @@
-<div class="body-container">
-    <div class="card flex flex-column justify-content-center">
+<div class="login-body-container">
+    <h2 class="text-h1 mb-4">Bienvenido a Sales System</h2>
+    
+    <div class="box flex flex-column justify-content-center">
+        <h4 class="align-self-center m-0 h4-color">Inicie sesión con su cuenta</h4>
         <form [formGroup]="loginFormGroup">
-            <span class="p-float-label text-margin">
-                <input id="input-text" type="text" pInputText formControlName="username" class="p-inputtext w-full" required="true"/>
+            <span class="p-float-label text-margin p-input-icon-left width">
+                <i class="pi pi-user"></i>
+                <input id="input-text" type="text" pInputText formControlName="username" class="p-inputtext-sm w-full" required="true"/>
                 <label htmlFor="username">Usuario</label>
             </span>
-            <span class="p-float-label text-margin">
-                <input id="input-text" type="password" pInputText formControlName="password" class="p-inputtext w-full" required="true"/>
+            <span class="p-float-label text-margin p-input-icon-left width">
+                <i class="pi pi-lock"></i>
+                <input id="input-text" type="password" pInputText formControlName="password" class="p-inputtext-sm w-full" required="true"/>
                 <label htmlFor="password">Contraseña</label>
             </span>
-            <div class="flex justify-content-center"><button pButton pRipple label="Iniciar sesión" icon="pi pi-check" class="text-margin p-button-text btn-color" [disabled]="loginFormGroup.invalid" (click)="ejecutarLogin()"></button></div>
+            
+            <div class="flex justify-content-center"><button pButton pRipple label="Iniciar sesión" icon="fa-solid fa-right-to-bracket" class="text-margin p-button-text btn-color" [disabled]="loginFormGroup.invalid" (click)="ejecutarLogin()"></button></div>
         </form>    
     </div>
     

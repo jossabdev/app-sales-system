@@ -3,13 +3,13 @@
     <div class="btn-shorcut">
         <h3 class="h2-color">{{titulo}}</h3>
 
-        <div class="btn-group" *ngIf="showButtonNew">
+        <div class="btn-group" *ngIf="showButtonNew && onlyRoleAdmin">
             <button pButton pRipple label="Nuevo producto" icon="fa-solid fa-plus" class="p-button-text button" (click)="habilitarNuevoProducto()"></button>           
         </div>        
     </div>
     
     <!-- Formulario de creacion -->
-    <div class="form-container" *ngIf="isNewProducto">
+    <div class="form-container" *ngIf="isNewProducto && onlyRoleAdmin">
         <form class="filter-form" [formGroup]="formNuevoProducto"  class="p-fluid">
             <table class="table-full-width" cellspacing="0">
                 <tr class="row">                
@@ -22,7 +22,7 @@
     
                     <td class="column">           
                         <span class="p-float-label ">
-                            <p-dropdown id="input-estados-cat" formControlName="categoria" [options]="categorias" placeholder="Seleccione una categoría" optionLabel="nombreCategoria" inputId="float-label" class="p-inputtext-sm" [style]="{'width':'100%'}"></p-dropdown>
+                            <p-dropdown id="input-estados-cat" formControlName="categoria" [options]="categorias" placeholder="Seleccione una categoría" optionLabel="nombreCategoria" inputId="float-label" class="p-inputtext-sm" [style]="{'width':'100%'}" [filter]="true" filterBy="nombreCategoria"></p-dropdown>
                             <label for="float-label">Categoría</label>
                         </span>
                     </td>
@@ -60,7 +60,7 @@
                 </tr>
                 <tr class="row">
                     <div class="button-actions">
-                        <button mat-flat-button type="submit" color="primary" class="button width height" (click)="guardarProducto(); limpiarFormularioCreacion()" [disabled]="formNuevoProducto.invalid">Crear</button>
+                        <button mat-flat-button type="submit" color="primary" class="button width height" (click)="guardarProducto()" [disabled]="formNuevoProducto.invalid">Crear</button>
                         <button mat-flat-button color="accent" class="button width height" (click)="limpiarFormularioCreacion()">Cancelar</button>
                     </div>
                 </tr>
@@ -88,7 +88,7 @@
                     
                     <td class="column">   
                         <span class="p-float-label ">
-                            <p-dropdown id="input-estados-cat" formControlName="categoria" [options]="categorias" placeholder="Seleccione una categoría" optionLabel="nombreCategoria" inputId="float-label" class="p-inputtext-sm" [style]="{'width':'100%'}"></p-dropdown>
+                            <p-dropdown id="input-estados-cat" formControlName="categoria" [options]="categorias" placeholder="Seleccione una categoría" optionLabel="nombreCategoria" inputId="float-label" class="p-inputtext-sm" [style]="{'width':'100%'}" [filter]="true" filterBy="nombreCategoria"></p-dropdown>
                             <label for="float-label">Categoría</label>
                         </span>                    
                     </td> 
@@ -163,8 +163,8 @@
                     <td>{{ producto.estado }}</td> 
                     <td style="text-align: center;">
                         <button pButton pRipple icon="pi pi-search" class="p-button-rounded p-button-text p-button-info" (click)="verProductoDetalle(producto)"></button>
-                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-success" (click)="editarProducto(producto)"></button>
-                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" (click)="eliminarProducto(producto)"></button>
+                        <button *ngIf="onlyRoleAdmin" pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-success" (click)="editarProducto(producto)"></button>
+                        <button *ngIf="onlyRoleAdmin" pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" (click)="eliminarProducto(producto)"></button>
                     </td>                
                 </tr>
             </ng-template>

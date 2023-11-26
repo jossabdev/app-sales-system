@@ -28,5 +28,18 @@ export const paths = {
     obtenerProductoTop: '/obtenerProductoTop',
     obtenerEstadisticasVentasPorOpcion: '/obtenerEstadisticasVentasPorOpcion',
     consultarPorRangoFecha: '/consultarPorRangoFecha',
-    obtenerTodosLosProductosEnStock: '/obtenerTodosLosProductosEnStock'
+    obtenerTodosLosProductosEnStock: '/obtenerTodosLosProductosEnStock',
+    anularVenta: '/anularVenta',
+    obtenerProductoEnStockPorCodigoBarras: '/obtenerProductoEnStockPorCodigoBarras',
+    obtenerTotalDeInversion: '/obtenerTotalDeInversion',
+
+    roles: '/roles',
+    usuarios: '/usuarios',
+    guardarUsuario: '/guardarUsuario',
+    actualizarUsuario: '/actualizarUsuario',
+    eliminarUsuario: '/eliminarUsuario',
+
+    reportes: '/reportes',
+    generarReporteVenta: '/generarReporteVenta'
+
 }

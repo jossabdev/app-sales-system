@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output, OnInit, HostListener } from '@angular/core';
 import { navbarData } from './nav-data';
+import { navbarDataVendedor } from './nav-data-vendedor';
 
 interface SideNavToggle{
   screenWidth: number;
@@ -12,18 +13,30 @@ interface SideNavToggle{
   styleUrls: ['./sidenav.component.scss']
 })
 export class SidenavComponent implements OnInit{
-
+  
   @Output() onToggleSideNav: EventEmitter<SideNavToggle> = new EventEmitter();
   collapsed = false;  
   screenWidth = 0;
-  navData = navbarData;
+  navDataAdmin = navbarData;
+  navDataVendedor = navbarDataVendedor;
+  navData: any;
   active  = "active";
   indice = 0;
   activeItemDefault = true;
+  onlyRoleAdmin: boolean = false;
 
-  ngOnInit(): void{
-    this.screenWidth = window.innerWidth;
-    console.log(this.screenWidth);
+  constructor(){
+    this.onlyRoleAdmin = localStorage.getItem('Rol') === 'Administrador'? true : false;
+    if(this.onlyRoleAdmin){
+      this.navData = this.navDataAdmin;
+    }else{
+      this.navData = this.navDataVendedor;
+    }
+  }
+
+  ngOnInit(): void{    
+    this.screenWidth = window.innerWidth; 
+    console.log(this.screenWidth);    
   }
 
   @HostListener('window:resize', ['$event'])

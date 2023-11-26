@@ -3,13 +3,13 @@
     <div class="btn-shorcut">
         <h3 class="h2-color">{{titulo}}</h3>
 
-        <div class="btn-group" *ngIf="showButtonNew">
+        <div class="btn-group" *ngIf="showButtonNew && onlyRoleAdmin">
             <button pButton pRipple label="Nueva categoría" icon="fa-solid fa-plus" class="p-button-text button" (click)="habilitarNuevaCategoria()"></button>           
         </div>        
     </div>
 
     <!-- Formulario de creacion -->
-    <div class="form-container" *ngIf="isNewCategoria"> 
+    <div class="form-container" *ngIf="isNewCategoria && onlyRoleAdmin"> 
         <form class="filter-form" [formGroup]="formNuevacategoria">
             <table class="table-full-width" cellspacing="0">
                 <tr class="row">                
@@ -28,7 +28,7 @@
                 </tr>
                 <tr class="row">
                     <div class="button-actions">
-                        <button mat-flat-button type="submit" color="primary" class="button width height" (click)="guardarCategoria(); limpiarFormularioCreacion()" [disabled]="formNuevacategoria.invalid">Crear</button>
+                        <button mat-flat-button type="submit" color="primary" class="button width height" (click)="guardarCategoria()" [disabled]="formNuevacategoria.invalid">Crear</button>
                         <button mat-flat-button color="accent" class="button width height" (click)="limpiarFormularioCreacion()">Cancelar</button>
                     </div>
                 </tr>
@@ -98,9 +98,9 @@
                     <td >{{ categoria.nombreCategoria }}</td>
                     <td >{{ categoria.estado }}</td>
                     <td style="text-align: center;">
-                        <button pButton pRipple icon="pi pi-search" class="p-button-rounded p-button-text p-button-info" (click)="verCategoriaDetalle(categoria)"></button>
-                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-success" (click)="editarCategoria(categoria)"></button>
-                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" (click)="eliminarCategoria(categoria)"></button>
+                        <button  pButton pRipple icon="pi pi-search" class="p-button-rounded p-button-text p-button-info" (click)="verCategoriaDetalle(categoria)"></button>
+                        <button *ngIf="onlyRoleAdmin" pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-success" (click)="editarCategoria(categoria)"></button>
+                        <button *ngIf="onlyRoleAdmin" pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" (click)="eliminarCategoria(categoria)"></button>
                     </td>             
                 </tr>
             </ng-template>

@@ -1,9 +1,55 @@
+.login-body-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    height: 100%;
+    background: rgba(255,219,230, 0.5);
+    //background: linear-gradient(95deg, rgba(255,219,230,1) 0%, rgba(255,248,242,1) 40%);    
+}
+
+.text-h1{
+    color: #F31559;
+}
+
+.h4-color{
+    color: #010101
+}
 .card {
-    background: var(--surface-card);
     padding: 2rem;
     border-radius: 10px;
-    margin: 1.8rem 2.8rem 0 0;
-    width: 30%;
+    border: 1px solid transparent;
+    background: linear-gradient(45deg,#F31559, #FFB07F) border-box;
+    -webkit-mask: /*4*/
+     linear-gradient(#fff 0 0) padding-box, 
+     linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; /*5'*/
+          mask-composite: exclude; /*5*/
+    //margin: 1.8rem 2.8rem 0 0;
+    width: 30rem;
+}
+
+.box {
+    position: relative;
+    width: 27rem;
+    padding: 2rem;   
+    background: #fff;
+    border-radius: 8px; 
+}
+
+.box::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 8px; 
+    padding: 2px; 
+    background: linear-gradient(45deg,rgba(243, 21, 89, 0.3), rgba(255, 176, 127, 0.7)); 
+    -webkit-mask: 
+       linear-gradient(#fff 0 0) content-box, 
+       linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude; 
 }
 
 .btn-color{
@@ -20,4 +66,8 @@
 { 
     box-shadow: none; 
     border: 2px solid #F31559;    
+}
+
+.width{
+    width: 92%;
 }

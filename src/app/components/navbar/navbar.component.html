@@ -2,7 +2,7 @@
     <div class="p-navbar-group-end">        
         <p-avatar icon="pi pi-user" styleClass="mr-2" [style]="{'background-color':'#F31559', 'color': '#ffffff'}" shape="circle"></p-avatar>        
         <div>
-            <button pButton type="button" class="p-button-text txt-color" (click)="menu.toggle($event)" label="Joshua Sailema"></button>    
+            <button pButton type="button" class="p-button-text txt-color" (click)="menu.toggle($event)" [label]="nombre!"></button>    
             <p-menu appendTo="body" #menu [model]="items" [popup]="true" class="popmenu-class"></p-menu>        
         </div>
         
