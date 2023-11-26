@@ -20,6 +20,7 @@ interface EstadosProd { valor: string };
   providers: [ MessageService, ConfirmationService ]
 })
 export class ProductoComponent implements OnInit{
+  onlyRoleAdmin: boolean = false;
   tituloShow: string = "Administración / Producto";
   tituloCreate: string = "Administración / Producto / crear";
   titulo : string = this.tituloShow;
@@ -43,9 +44,10 @@ export class ProductoComponent implements OnInit{
   isEditProductoDetalle = false;
 
   constructor(private _formBuilder: FormBuilder, private _categoriaService: CategoriaService, private _productoService: ProductoService, private messageService: MessageService,  private confirmationService: ConfirmationService){
+    this.onlyRoleAdmin = localStorage.getItem('Rol') === 'Administrador'? true : false;
     this.formNuevoProducto = this._formBuilder.group({
       nombreProducto: ['', Validators.required],
-      descripcion: ['', Validators.required],
+      descripcion: [''],
       codigoBarras: [''],
       categoria: ['', Validators.required],
       costo: [, Validators.required],
@@ -93,7 +95,7 @@ export class ProductoComponent implements OnInit{
   
   limpiarFormularioCreacion(){
     this.formNuevoProducto.reset({estado: this.estado});
-    //this.obtenerTodasLasCategorias();    
+    this.obtenerTodosLosProductos();    
     this.isNewProducto = false;
     this.isShowProducto = true;
     this.showButtonNew = true; 
@@ -105,10 +107,13 @@ export class ProductoComponent implements OnInit{
     nuevoProducto.estado = this.estado;
     console.log(nuevoProducto);
     return this._productoService.save(nuevoProducto)
-        .subscribe( (response: GenericBasicResponse<Producto>) => {
-        console.log(response);
-        this.messageService.add({ severity: 'success', summary: 'Transacción exitosa', detail: 'Producto guardado correctamente.'});
-        });
+        .subscribe({ 
+          next : (response: any) => {
+            this.messageService.add({ severity: 'success', summary: 'Transacción exitosa', detail: 'Producto guardado correctamente.'});
+            this.limpiarFormularioCreacion();
+        },
+        error: (response: any) => this.messageService.add({ severity: 'error', summary: 'Error al guardar producto', detail: response.error.message })
+      });
   }
 
   obtenerTodasLasCategoriasActivas() {
@@ -219,16 +224,27 @@ export class ProductoComponent implements OnInit{
     this.isEditProductoDetalle= false;
     this.isShowProductoDetalle = false;
   }
+  
   eliminarProducto(producto: Producto){
     this.confirmationService.confirm({
       message: '¿ Está seguro que desea eliminar el producto ' + producto.nombreProducto + ' ?',
       header: 'Eliminar producto',      
       icon: 'pi pi-exclamation-triangle', 
       accept: () => {
-          this._productoService.deleteByProducto(producto).subscribe();
-          this.productos = this.productos.filter((val) => val.idProducto !== producto.idProducto);
-          this.producto = {};
-          this.messageService.add({ severity: 'success', summary: 'Transacción exitosa', detail: 'Producto eliminado', life: 3000 });
+          this._productoService.deleteByProducto(producto).subscribe({        
+            next : (response: any) => {
+              this.messageService.add({ severity: 'success', summary: 'Transacción exitosa', detail: 'Producto eliminado', life: 3000 });
+              this.productos = this.productos.filter((val) => val.idProducto !== producto.idProducto);
+              this.producto = {};
+            },
+            error: (response: any) => {
+              console.log(response);
+              this.messageService.add({ severity: 'error', summary: 'Error al eliminar producto', detail: 'Posible razón: Producto no debe tener inventario para poder ser eliminado' })
+            }
+         });
+
+          
+          
       }
     });
   }

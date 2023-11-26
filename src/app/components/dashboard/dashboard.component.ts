@@ -3,6 +3,7 @@ import { MenuItem } from 'primeng/api';
 import { UIChart } from 'primeng/chart/chart';
 import { DetalleVenta } from 'src/app/interfaces/detalle-venta';
 import { ConsultaVentas, EstadisticaVentaResponse, Venta } from 'src/app/interfaces/venta';
+import { AuthService } from 'src/app/services/auth.service';
 import { VentaService } from 'src/app/services/venta.service';
 
 export interface Card {
@@ -44,13 +45,20 @@ export class DashboardComponent{
   itemsGanancias: MenuItem[];
   itemsVentas: MenuItem[];
   itemsProductos: MenuItem[];
+  itemsInversion: MenuItem[];
   mes: string = '';
   mesStrTotalVentas: string = '';
   mesStrTotalGanancias: string = '';
   mesStrProductoTop: string = '';
+  mesStrTotalInversion: string = '';
   mesTotalVentas: number;
   mesTotalGanancias: number;
   mesProductoTop: number;
+  mesTotalInversion: number;
+  checkedTotalVentas: boolean = false;
+  checkedTotalGanancias: boolean = false;
+  checkedProductoTop: boolean = false;
+  checkedTotalInversion: boolean = false;
 
   labelVentas: string = 'Ultimas ventas realizadas';
 
@@ -75,14 +83,22 @@ export class DashboardComponent{
     
   };
 
+  totalInversion: Card = {
+    header: "Total Inversión",
+    subheader: "",
+    body: ""
+    
+  };
+
 
   styleCard: any = { 
     height: '28.5vh',
     borderRadius: '1.3rem',
-    padding: '1rem 1.7rem',
-    margin: '0 2rem 2rem 0',
-    fontSize: '1.8rem',
-    minWidth: '23rem',
+    padding: '1rem 1rem',
+    margin: '0 1.8rem 0rem 0',
+    fontSize: '1.5rem',
+    minWidth: '25rem',
+    width: '25rem',
     boxShadow: '1px 2px 4px rgba($color: #000000, $alpha: 0.15)',    
     
   };
@@ -91,9 +107,9 @@ export class DashboardComponent{
     height: '45vh',
     borderRadius: '1.3rem',
     padding: '0.7rem 1.7rem',
-    margin: '0 2rem 2rem 0',
+    margin: '0 2rem 0rem 0',
     fontSize: '1.2rem',
-    boxShadow: '1px 2px 4px rgba($color: #000000, $alpha: 0.15)',    
+    boxShadow: '1px 2px 4px rgba($color: #000000, $alpha: 0.15)',   
     
   };
 
@@ -105,9 +121,14 @@ export class DashboardComponent{
   seMuestraCalendar = false;
   seMuestraCalendarGanancias = false;
   seMuestraCalendarProductoTop = false;
+  seMuestraCalendarTotalInversion = false;
   estadisticasVentas?: EstadisticaVentaResponse = {labels: [], values: []};
-  @ViewChild("chart") chart!: UIChart; 
-  
+  @ViewChild("chart") chart!: UIChart;
+  iconoMuestraOcultaInfoTotalVenta = 'pi pi-eye-slash'; 
+  iconoMuestraOcultaInfoTotalGanancias = 'pi pi-eye-slash'; 
+  iconoMuestraOcultaInfoProductoTop = 'pi pi-eye-slash'; 
+  iconoMuestraOcultaInfoTotalInversion = 'pi pi-eye-slash'; 
+
   constructor(private _ventasService: VentaService){
     
     let mesActual = this.getMonthStr(this.fechaActual.getMonth());
@@ -116,9 +137,11 @@ export class DashboardComponent{
     this.mesStrTotalVentas = mesActual;
     this.mesStrTotalGanancias = mesActual;
     this.mesStrProductoTop = mesActual;
+    this.mesStrTotalInversion = 'Inversión total';
     this.mesTotalVentas = this.fechaActual.getMonth();
     this.mesTotalGanancias = this.fechaActual.getMonth();
     this.mesProductoTop = this.fechaActual.getMonth();
+    this.mesTotalInversion = this.fechaActual.getMonth();
     console.log(mesActual);
     this.items = [
         {
@@ -231,6 +254,15 @@ export class DashboardComponent{
       }
   },
     ];
+
+    this.itemsInversion = [
+      {
+        label: 'Inversión Total',
+        command: () => {
+          this.getTotalInversion();
+        }
+      }
+    ];
   }
   
   ngOnInit() {
@@ -296,7 +328,7 @@ export class DashboardComponent{
     this.getTotalGananciasPorMes(this.fechaActual.getMonth());
     this.getProductoTopPorMes(this.fechaActual.getMonth());
     this.getUltimasVentas();
-    
+    this.getTotalInversion();    
   }
 
   // rango de fechas
@@ -530,6 +562,20 @@ export class DashboardComponent{
 
   }
 
+  getTotalInversion(){
+    this.seMuestraCalendarTotalInversion = false;
+   
+    this._ventasService.getTotalInversion().subscribe(
+        response => {   
+          if(response.data?.totalInversion){
+            this.totalInversion.body = response.data?.totalInversion;
+          } else{
+            this.totalInversion.body = 0;
+          }                      
+        }
+    );
+  }
+
   getUltimasVentas(){
     let ventas: Venta[];
 
@@ -543,14 +589,15 @@ export class DashboardComponent{
 
                 let detalleVenta: DetalleVenta[] | undefined = venta.detalleVenta;
 
-                // concateno descripciones de los productos del detalle
-                detalleVenta?.forEach( detalle => {
-                    descripcion = descripcion + detalle.producto?.descripcion + " ";
-                });
+                if(venta.estado === 'Activo'){
+                  // concateno descripciones de los productos del detalle
+                  detalleVenta?.forEach( detalle => {
+                    descripcion = descripcion + detalle.producto?.nombreProducto + " ";
+                  });
+                  let ultimasVentas: UltimasVentas = { descripcion: descripcion, total: total};
 
-                let ultimasVentas: UltimasVentas = { descripcion: descripcion, total: total};
-
-                this.ultimasVentas.push(ultimasVentas);
+                  this.ultimasVentas.push(ultimasVentas);
+                }
             })        
         }
     );
@@ -632,5 +679,41 @@ export class DashboardComponent{
         this.chart.refresh();     
         }
   );
+  }
+
+  changeVisibilityOfEyeIconTotalVentas(){
+    this.checkedTotalVentas = !this.checkedTotalVentas;
+    if(this.checkedTotalVentas){
+        this.iconoMuestraOcultaInfoTotalVenta = 'pi pi-eye';
+    }else{
+        this.iconoMuestraOcultaInfoTotalVenta = 'pi pi-eye-slash'
+    }
+  }
+
+  changeVisibilityOfEyeIconTotalGanancias(){
+    this.checkedTotalGanancias = !this.checkedTotalGanancias;
+    if(this.checkedTotalGanancias){
+        this.iconoMuestraOcultaInfoTotalGanancias = 'pi pi-eye';
+    }else{
+        this.iconoMuestraOcultaInfoTotalGanancias = 'pi pi-eye-slash'
+    }
+  }
+
+  changeVisibilityOfEyeIconProductoTop(){
+    this.checkedProductoTop = !this.checkedProductoTop;
+    if(this.checkedProductoTop){
+        this.iconoMuestraOcultaInfoProductoTop = 'pi pi-eye';
+    }else{
+        this.iconoMuestraOcultaInfoProductoTop = 'pi pi-eye-slash'
+    }
+  }
+
+  changeVisibilityOfEyeIconTotalInversion(){
+    this.checkedTotalInversion = !this.checkedTotalInversion;
+    if(this.checkedTotalInversion){
+        this.iconoMuestraOcultaInfoTotalInversion = 'pi pi-eye';
+    }else{
+        this.iconoMuestraOcultaInfoTotalInversion = 'pi pi-eye-slash'
+    }
   }
 }

@@ -1,25 +1,27 @@
 <div class="body-container">
+    <p-toast></p-toast>
+    <p-toast position="bottom-center" key="bc"></p-toast>
     <div class="btn-shorcut">
-        <h3 class="h3-color">Ventas</h3>
+        <h3 class="h3-color">{{titulo}}</h3>
         <div class="btn-group" *ngIf="!realizandoVenta">
             <button pButton pRipple label="Venta rápida" icon="fa-solid fa-circle-dollar-to-slot" class="p-button-text button" (click)="habilitarVentaRapida()"></button>
-            <button pButton pRipple label="Venta normal" icon="fa-solid fa-cart-plus" class="p-button-text button"></button>
+            <button pButton pRipple label="Venta normal" icon="fa-solid fa-cart-plus" class="p-button-text button" (click)="habilitarVentaNormal()"></button>
         </div>
     </div>
-    
-    <div class="venta-rapida-container" *ngIf="esVentaRapida">
+    <!-- Venta Rápida -->
+    <div class="venta-rapida-container" *ngIf="esVentaRapida">        
         <form [formGroup]="formVentaRapida" class="filter-form p-fluid">
             <table class="table-full-width" cellspacing="0">
                 <tr class="row">      
                     <td class="column">
                         <span class="p-float-label">
-                            <p-dropdown id="input-productos" formControlName="producto" [options]="productos" placeholder="Seleccione un producto" optionLabel="nombreProducto" inputId="float-label" class="p-inputtext-sm" [style]="{'width':'100%'}"></p-dropdown>
+                            <p-dropdown id="input-productos" formControlName="producto" [options]="productos" placeholder="Seleccione un producto" optionLabel="nombreProducto" inputId="float-label" class="p-inputtext-sm" [style]="{'width':'100%'}" [filter]="true" filterBy="nombreProducto"></p-dropdown>
                             <label for="float-label">Producto</label>
                         </span>                   
                     </td>
                     <td class="column">
                         <span class="p-float-label">
-                            <input id="input-producto" type="text" pInputText formControlName="codigoBarras" class="p-inputtext-sm w-full"/>
+                            <input id="input-codigo-barras" type="text" pInputText formControlName="codigoBarras" class="p-inputtext-sm w-full" (keypress)="onKeyCodigoBarrasVentaRapida($event)" (blur)="focusOnInputCodigoBarras()" autofocus />
                             <label htmlFor="codigoBarras">Código de barras</label>
                         </span>                                       
                     </td>
@@ -34,8 +36,76 @@
         </form>
     </div>
 
-    <div class="venta-normal-container" *ngIf="esVentaNormal">
+    <!-- Venta Normal -->
+    <div class="venta-normal-container" *ngIf="esVentaNormal">        
+        <form [formGroup]="formVentaNormal" class="filter-form p-fluid">
+            <table class="table-full-width" cellspacing="0">
+                <tr class="row">      
+                    <td class="column">
+                        <span class="p-float-label">
+                            <p-dropdown id="input-productos" formControlName="producto" [options]="productos" placeholder="Seleccione un producto" optionLabel="nombreProducto" inputId="float-label" class="p-inputtext-sm" [style]="{'width':'100%'}" [filter]="true" filterBy="nombreProducto"></p-dropdown>
+                            <label for="float-label">Producto</label>
+                        </span>                   
+                    </td>
+                    <td class="column">
+                        <span class="p-float-label">
+                            <input  id="input-codigo-barras" type="text" pInputText formControlName="codigoBarras" class="p-inputtext-sm w-full" (keypress)="onKeyBusquedaProducto($event)" (blur)="focusOnInputCodigoBarras()" autofocus #codigoBarrasVentaNormal/>
+                            <label htmlFor="codigoBarras">Código de barras</label>
+                        </span>                                       
+                    </td>
+                    <td class="column">
+                        <span class="p-float-label">
+                            <p-inputNumber formControlName="cantidad" placeholder="Ingrese cantidad" [showButtons]="true" inputId="minmax-buttons" [min]="0" [max]="100"  incrementButtonClass="p-button-danger btn-color" decrementButtonClass="p-button-warning" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"></p-inputNumber>
+                            <label htmlFor="cantidad">Cantidad</label>
+                        </span>                                       
+                    </td>
+                </tr>
+                <tr class="row"> 
+                    <div class="button-actions">
+                        <button pButton pRipple label="Agregar" icon="fa-solid fa-plus" class="p-button-text button-add width height" (click)="agregarProductoALaVenta()"></button>                        
+                    </div>
+                </tr>
+            </table>
+        </form>
 
+       <h4 class="titulo-h4">Detalle de productos a vender: </h4>
+       <div class="card-table">  
+        <p-table [value]="detalleVentaNormal!" [tableStyle]="{ 'min-width': '50rem' }">
+            <ng-template pTemplate="caption">
+                <div class="flex align-items-center justify-content-start h-1rem">
+                    <p *ngIf="detalleVentaNormal.length === 0; else elseTemplate" style="color: slategray;">Aun no se han agregado productos</p>    
+                    <ng-template #elseTemplate>
+                        <p style="color: #F31559;">Total:  {{ getTotalDetalleVentaNormal() | currency: 'USD'}} </p> 
+                    </ng-template>                
+                </div>                
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width:25%; ">Producto</th>
+                    <th style="width:20%; ">Cantidad</th>
+                    <th style="width:20%; ">Valor unitario</th>
+                    <th style="width:20%; ">Valor total</th>
+                    <th style="width:15%; text-align: center;"><div class="th-text-color">Acciones</div></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-detalle>
+                <tr>
+                    <td>{{ detalle.producto.nombreProducto }}</td>
+                    <td>{{ detalle.cantidad }}</td>
+                    <td>{{ detalle.valorUnitario | currency: 'USD' }}</td>
+                    <td>{{ detalle.valorTotal | currency: 'USD' }}</td>
+                    <td style="text-align: center;">                       
+                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" (click)="eliminarDetalleVentaNormal(detalle)"></button>
+                    </td>  
+                </tr>
+            </ng-template>
+            
+        </p-table>
+        <div class="button-actions">
+            <button pButton pRipple label="Vender" icon="fa-solid fa-cart-plus" class="p-button-text button-add width height" (click)="realizarVentaNormal()" [disabled]="detalleVentaNormal.length === 0"></button>
+            <button pButton pRipple label="Cancelar" icon="fa-solid fa-xmark" class="p-button-text button-cancel width height" (click)="salirVenta(); redirect()"></button>
+        </div>
+       </div>
     </div>
 
     <!-- Formulario de filtros de busqueda  -->
@@ -43,40 +113,44 @@
         <form [formGroup]="formBuscarVentas" class="filter-form p-fluid">
             <table class="table-full-width" cellspacing="0">
                 <tr class="row">      
-                    <td class="column">
+                   <!-- <td class="column" *ngIf="onlyRoleAdmin">
                         <span class="p-float-label">
                             <input id="input-venta" placeholder="Ingrese código de venta" type="number" pInputText formControlName="idVenta" class="p-inputtext-sm w-full"/>
                             <label htmlFor="idVenta">Código de venta</label>
                         </span>                   
-                    </td>          
-                    <td class="column">
+                    </td>    -->      
+                    <td class="column" *ngIf="onlyRoleAdmin">
                         <span class="p-float-label">
                             <input id="input-venta" type="text" pInputText formControlName="vendedor" class="p-inputtext-sm w-full"/>
                             <label htmlFor="vendedor">Vendedor</label>
                         </span>                    
                     </td>
                 
-                    <td class="column">
-                        <span class="p-float-label">
-                            <input id="input-venta" type="text" pInputText formControlName="cliente" class="p-inputtext-sm w-full"/>
-                            <label htmlFor="cliente">Cliente</label>
-                        </span>
-                    </td>
-    
-                    <td class="column">
-                        <span class="p-float-label">
-                            <p-calendar formControlName="fechaVenta" placeholder="Escoja un rango de fechas" selectionMode="range" dateFormat="yy-mm-dd" [readonlyInput]="true" class="p-inputtext-sm w-full" [showIcon]="true"  [showTime]="true" [showSeconds]="true"></p-calendar>                  
-                            <label htmlFor="fechaVenta">Fecha Venta</label>
-                        </span>
-                        
-                    </td>
-                
-                    <td class="column"> 
+                    <td class="column" *ngIf="onlyRoleAdmin"> 
                         <span class="p-float-label ">
                             <p-dropdown id="input-estados-cat" formControlName="estado" [options]="estados" placeholder="Seleccione un estado" optionLabel="valor" inputId="float-label" class="p-inputtext-sm" [style]="{'width':'100%'}"></p-dropdown>
                             <label for="float-label">Estados</label>
                         </span>                    
                     </td> 
+                   <!-- <td class="column" *ngIf="onlyRoleAdmin">
+                        <span class="p-float-label">
+                            <input id="input-venta" type="text" pInputText formControlName="cliente" class="p-inputtext-sm w-full"/>
+                            <label htmlFor="cliente">Cliente</label>
+                        </span>
+                    </td>-->
+    
+                    <td class="column">
+                        <span class="p-float-label">
+                            <p-calendar formControlName="fechaDesde" placeholder="Fecha desde" dateFormat="yy-mm-dd" class="p-inputtext-sm w-full" [showIcon]="true"  [showTime]="true" [showSeconds]="true"></p-calendar>                  
+                            <label htmlFor="fechaDesde">Fecha desde</label>
+                        </span>                        
+                    </td>
+                    <td class="column">
+                        <span class="p-float-label">
+                            <p-calendar formControlName="fechaHasta" placeholder="Fecha hasta" dateFormat="yy-mm-dd" class="p-inputtext-sm w-full" [showIcon]="true"  [showTime]="true" [showSeconds]="true"></p-calendar>                  
+                            <label htmlFor="fechaHasta">Fecha hasta</label>
+                        </span>                        
+                    </td>
                 </tr>
                 <tr class="row"> 
                     <div class="button-actions">
@@ -87,10 +161,15 @@
             </table>
         </form>
     </div>
-    
-    
-    <div class="card" *ngIf="esShowVenta  || esVentaRapida">
-        <p-toast></p-toast>
+   
+    <div class="flex flex-row justify-content-between mr-6">
+        <h4 class="h3-color mt-3 mb-2" *ngIf="esShowVenta  || esVentaRapida">Listado de ventas</h4>
+        <div class="flex flex-row">
+            <p *ngIf="isTotalVentaSegunFiltro" class="align-self-end">Total de ventas: {{totalDeVentasSegunFiltros| currency: 'USD'}}</p>
+            <button *ngIf="onlyRoleAdmin && isTotalVentaSegunFiltro && ventas.length > 0" pButton pRipple icon="pi pi-file-excel" class="p-button-rounded p-button-text p-button-success ml-2" pTooltip="Descargar reporte de ventas"  tooltipPosition="bottom" (click)="generarReporteVentasActivas(); generarReporteVentasAnuladas()"></button>
+        </div>        
+    </div>    
+    <div class="card" *ngIf="esShowVenta  || esVentaRapida">        
         <p-table #dt
                  [value]="ventas"
                  [paginator]="true"
@@ -105,25 +184,24 @@
                 <tr>
                     <th style="width:7%;"><div class="th-text-color">Código</div></th>
                     <th style="width:15%;"><div class="th-text-color">Vendedor</div></th>
-                    <th style="width:15%;"><div class="th-text-color">Cliente</div></th>
+                    <th style="width:15%;"><div class="th-text-color">Productos</div></th>
                     <th style="width:15%;"><div class="th-text-color">Total</div></th>
                     <th style="width:18%;"><div class="th-text-color">Fecha de Venta</div></th>
-                    <th style="width:10%;"><div class="th-text-color">Estado</div></th>
-                    <th style="width:20%; text-align: center;"><div class="th-text-color">Acciones</div></th>
+                    <th style="width:15%;"><div class="th-text-color">Estado</div></th>
+                    <th style="width:15%; text-align: center;"><div class="th-text-color">Acciones</div></th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-venta>
                 <tr>
                     <td>{{ venta.idVenta }}</td>
                     <td>{{ venta.vendedor }}</td>
-                    <td>{{ venta.cliente }}</td>
+                    <td>{{ this.getResumenProductosVenta(venta) }}</td>
                     <td>{{ venta.total | currency: 'USD' }}</td>
                     <td>{{ venta.fechaVenta }} </td>
                     <td>{{ venta.estado }}</td> 
                     <td style="text-align: center;">
                         <button pButton pRipple icon="pi pi-search" class="p-button-rounded p-button-text p-button-info" (click)="verDetalleVenta(venta)"></button>
-                        <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-success" (click)="editarVenta(venta)"></button>
-                        <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" (click)="eliminarVenta(venta)"></button>
+                        <button *ngIf="venta.estado !== 'Anulado' && onlyRoleAdmin" pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" (click)="anularVenta(venta)"></button>
                     </td>                
                 </tr>
             </ng-template>
@@ -194,15 +272,27 @@
         
     </ng-template>
 
-    <ng-template pTemplate="footer">
-        <div class="flex justify-content-center" *ngIf="isEditVentaDetalle; else templateElse">
-            <button pButton pRipple label="Actualizar" icon="pi pi-check" class="p-button-text btn-color" (click)="ejecutarEditarVenta()"></button>
-            <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text btn-color-cancel" (click)="ocultarDialog()"></button>            
-        </div>
-        <ng-template #templateElse>
-            <div class="flex justify-content-center"><button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text btn-color" (click)="ocultarDialog()"></button></div>
-        </ng-template>
-        
+    <ng-template pTemplate="footer">        
+        <div class="flex justify-content-center"><button pButton pRipple label="Aceptar" icon="pi pi-check" class="p-button-text btn-color" (click)="ocultarDialog()"></button></div>
     </ng-template>
 </p-dialog>
 
+<p-confirmDialog #cd [style]="{ width: '30rem' }">
+    
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-center">
+            <button type="button" pButton 
+            icon="pi pi-check" label="Aceptar"
+            class="p-button-text btn-color"
+            (click)="cd.accept()">
+        </button>
+
+        <button type="button" pButton 
+            icon="pi pi-times" label="Cancelar" 
+            class="p-button-text btn-color-cancel"
+            (click)="cd.reject()">
+        </button>
+        </div>
+        
+    </ng-template>
+</p-confirmDialog>

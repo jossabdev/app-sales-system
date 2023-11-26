@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { InputNumberInputEvent } from 'primeng/inputnumber';
 import { Estados } from 'src/app/interfaces/estados';
 import { GenericBasicResponse } from 'src/app/interfaces/generic-basic-response';
 import { GenericListResponse } from 'src/app/interfaces/generic-list-response';
@@ -18,6 +19,7 @@ interface EstadosProd { valor: string };
   providers: [ MessageService, ConfirmationService ]
 })
 export class InventarioComponent implements OnInit{
+  onlyRoleAdmin: boolean = false;
   showButtonNew = true;
   isNewInventario = false;
   isShowInventario = true;
@@ -40,6 +42,8 @@ export class InventarioComponent implements OnInit{
   cantidadIngresados: number = 0;
   
   constructor(private _formBuilder: FormBuilder, private _inventarioService: InventarioService, private _productoService: ProductoService, private messageService: MessageService,  private confirmationService: ConfirmationService){
+    this.onlyRoleAdmin = localStorage.getItem('Rol') === 'Administrador'? true : false;
+    
     this.formNuevoInventario = this._formBuilder.group({
       producto: ['', Validators.required],
       stockInicial: ['', Validators.required],
@@ -64,6 +68,8 @@ export class InventarioComponent implements OnInit{
       cantidadVendidos: [],
       stockTotal: [],
       estado: [],
+      nuevaCantidadIngresados: [],
+      nuevaCantidadQuitados: [],
     });
   }
   ngOnInit(): void {
@@ -82,6 +88,7 @@ export class InventarioComponent implements OnInit{
 
   limpiarFormularioCreacion(){
     this.formNuevoInventario.reset({estado: this.estado});
+    this.obtenerTodosLosInventarios();
     this.isNewInventario = false;
     this.isShowInventario = true;
     this.showButtonNew = true; 
@@ -96,7 +103,7 @@ export class InventarioComponent implements OnInit{
     this.titulo = this.tituloShow; 
    }
 
-  guardarInventario(): any{
+  guardarInventario(): any {
     let nuevoInventario: Inventario = this.formNuevoInventario.value;
     nuevoInventario.estado = this.estado;
     nuevoInventario.stockTotal = nuevoInventario.stockInicial;
@@ -105,15 +112,19 @@ export class InventarioComponent implements OnInit{
 
     console.log(nuevoInventario);
     return this._inventarioService.save(nuevoInventario)
-        .subscribe( (response: GenericBasicResponse<Inventario>) => {
-        console.log(response);
-        this.messageService.add({ severity: 'success', summary: 'Transacción exitosa', detail: 'Inventario guardado correctamente.'});
-        });
+        .subscribe( {
+          next : (response: any) => {            
+            console.log(response);
+            this.messageService.add({ severity: 'success', summary: 'Transacción exitosa', detail: 'Inventario guardado correctamente.'});
+            this.limpiarFormularioCreacion();             
+          },
+          error: (response: any) => this.messageService.add({ severity: 'error', summary: 'Error al crear el inventario', detail:  response.error.message })
+       });
   }
 
   obtenerTodosLosProductos(){ 
     this._productoService.getAll()
-        .subscribe( {        
+        .subscribe( {
           next : (response: any) => {            
             this.productos = response.data
             console.log(response.data);             
@@ -152,7 +163,7 @@ export class InventarioComponent implements OnInit{
     this.inventarioDialog = true;
     this.isShowInventarioDetalle = true;
     this.inventario = inventario;
-
+    console.log(this.inventario);
     this.formVerInventario = this._formBuilder.group({
       idInventario: [ {value: this.inventario.idInventario, disabled: true}],
       producto: [ {value: this.inventario.producto?.nombreProducto, disabled: true}],
@@ -179,7 +190,9 @@ export class InventarioComponent implements OnInit{
       cantidadIngresados: this.inventario.cantidadIngresados,  
       cantidadVendidos: this.inventario.cantidadVendidos,
       stockTotal: this.inventario.stockTotal,
-      estado: estadoAct,
+      estado: this.inventario.estado,
+      nuevaCantidadIngresados: 0,
+      nuevaCantidadQuitados: 0
     };
 
     // actualizamos formulario de edicion con la categoria seleccionada
@@ -190,8 +203,9 @@ export class InventarioComponent implements OnInit{
     this.formEditarInventario.controls['producto'].disable();
     this.formEditarInventario.controls['stockInicial'].disable();
     this.formEditarInventario.controls['stockTotal'].disable();    
-    this.formEditarInventario.controls['cantidadIngresados'].markAsUntouched();    
+    this.formEditarInventario.controls['cantidadIngresados'].disable();    
     this.formEditarInventario.controls['cantidadVendidos'].disable();
+    this.formEditarInventario.controls['estado'].disable();
   }
 
    ejecutarEditarInventario(){
@@ -201,23 +215,52 @@ export class InventarioComponent implements OnInit{
     inventario.idInventario = this.inventario.idInventario;
     
     // tomo el valor del objeto estado para asignar el estado 
-    inventario.estado = inventario.estado.valor;
+    //inventario.estado = inventario.estado.valor;
     console.log(inventario);
-    // actualizamos inventario en el back
-    this._inventarioService.update(inventario)
-       .subscribe({        
-          next : (response: any) => {
-              this.messageService.add({ severity: 'success', summary: response.body.message, detail: 'Inventario actualizado.'});
 
-               // actualizamos inventario a nivel de vista sin recargar la pagina
-              this.inventarios[this.findIndexById(this.inventario.idInventario!)] = inventario;
-          },
-          error: (response: any) => this.messageService.add({ severity: 'error', summary: 'Error al editar inventario', detail: response.status + ' ' + response.statusText })
-       });
-       
-    this.inventarioDialog = false;
-    this.isEditInventarioDetalle= false;
-    this.isShowInventarioDetalle = false;
+    let cantidadIngresados = inventario.nuevaCantidadIngresados;
+    let cantidadQuitados = inventario.nuevaCantidadQuitados;
+
+    if (cantidadIngresados > 0 && cantidadQuitados > 0){
+      this.messageService.add({ severity: 'info', summary: 'Atención', detail: 'No se puede aumentar y disminuir stock al mismo tiempo. Favor escoger solo una opción' });
+        
+    }else{
+      if(cantidadIngresados > 0){
+        inventario.cantidadIngresados = cantidadIngresados;
+        inventario.nuevaCantidadIngresados = null;
+      }else{
+        
+        let stockTotal = this.inventario.stockTotal;
+        let stockTotalRestado = stockTotal! - cantidadQuitados;
+        inventario.stockTotal = stockTotalRestado;
+        inventario.nuevaCantidadQuitados = null;    
+      }
+
+      console.log(inventario);
+      inventario.estado = Estados.modificado;
+
+      // actualizamos inventario en el back
+      this._inventarioService.update(inventario)
+         .subscribe({        
+            next : (response: any) => {
+                this.messageService.add({ severity: 'success', summary: response.body.message, detail: 'Inventario actualizado.'});
+                let inventarioActualizado: Inventario = response.body.data;
+                 // actualizamos inventario a nivel de vista sin recargar la pagina 
+                console.log(inventarioActualizado);             
+                this.inventarios[this.findIndexById(inventario.idInventario)] = inventarioActualizado;
+                
+                //habilitamos los dos campos
+                this.formEditarInventario.get('nuevaCantidadQuitados')?.enable();
+                this.formEditarInventario.get('nuevaCantidadIngresados')?.enable();
+            },
+            error: (response: any) => this.messageService.add({ severity: 'error', summary: 'Error al editar inventario', detail: response.status + ' ' + response.statusText })
+         });
+                
+      this.inventarioDialog = false;
+      this.isEditInventarioDetalle= false;
+      this.isShowInventarioDetalle = false;
+    }
+      
   } 
 
 
@@ -227,10 +270,19 @@ export class InventarioComponent implements OnInit{
       header: 'Eliminar inventario',      
       icon: 'pi pi-exclamation-triangle', 
       accept: () => {
-          this._inventarioService.deleteByInventario(inventario).subscribe();
-          this.inventarios = this.inventarios.filter((val) => val.idInventario !== inventario.idInventario);
-          this.inventario = {};
-          this.messageService.add({ severity: 'success', summary: 'Transacción exitosa', detail: 'Inventario eliminado', life: 3000 });
+          this._inventarioService.deleteByInventario(inventario).subscribe({        
+            next : (response: any) => {
+              this.inventarios = this.inventarios.filter((val) => val.idInventario !== inventario.idInventario);
+              this.inventario = {};
+              this.messageService.add({ severity: 'success', summary: 'Transacción exitosa', detail: 'Inventario eliminado', life: 3000 });
+            },
+            error: (response: any) => {
+              console.log(response);
+              this.messageService.add({ severity: 'error', summary: 'Error al eliminar inventario', detail: response.status + ' ' + response.message })
+            }
+         });
+
+          
       }
     });
  }
@@ -273,6 +325,27 @@ export class InventarioComponent implements OnInit{
       return 'Low Stock'
     }else{
       return 'Out of Stock'
+    }
+  }
+
+
+  deshabilitarHabilitarAgregarUnidades(event: InputNumberInputEvent){
+    //const elemento = event.target as HTMLInputElement;
+    
+    if(parseInt(event.value) > 0){
+      this.formEditarInventario.get('nuevaCantidadQuitados')?.disable();
+    }else{
+      this.formEditarInventario.get('nuevaCantidadQuitados')?.enable();
+    }
+  }
+
+  deshabilitarHabilitarQuitarUnidades(event: InputNumberInputEvent){
+    //const elemento = event.target as HTMLInputElement;
+    
+    if(parseInt(event.value) > 0){
+      this.formEditarInventario.get('nuevaCantidadIngresados')?.disable();
+    }else{
+      this.formEditarInventario.get('nuevaCantidadIngresados')?.enable();
     }
   }
 }

@@ -9,13 +9,28 @@
     <div>
         <ul class="sidenav-nav">
             <li class="sidenav-nav-item" *ngFor="let data of navData; index as idx">
-                <a class="sidenav-nav-link" [routerLink]="[data.routelink]"
-                routerLinkActive="active"
-                [routerLinkActiveOptions]="{exact: true}"
-                >
-                    <i class="sidenav-link-icon" [class]="data.icon"></i>
-                    <span class="sidenav-link-text" *ngIf="collapsed">{{data.label}}</span>
-                </a>
+                
+              <!--  <div *ngIf="onlyRoleAdmin; else templateElse">-->
+                    <a class="sidenav-nav-link" [routerLink]="[data.routelink]"
+                    routerLinkActive="active"
+                    [routerLinkActiveOptions]="{exact: true}"
+                    >
+                        <i class="sidenav-link-icon" [class]="data.icon"></i>
+                        <span class="sidenav-link-text" *ngIf="collapsed">{{data.label}}</span>
+                    </a>
+              <!--  </div>
+                <ng-template #templateElse>
+                    <div *ngIf="data.label === 'Ventas' || data.label === 'Inventario'">
+                        <a class="sidenav-nav-link" [routerLink]="[data.routelink]"
+                        routerLinkActive="active"
+                        [routerLinkActiveOptions]="{exact: true}"
+                        >
+                            <i class="sidenav-link-icon" [class]="data.icon"></i>
+                            <span class="sidenav-link-text" *ngIf="collapsed">{{data.label}}</span>
+                        </a>
+                    </div>                    
+                </ng-template>-->
+                
             </li>
         </ul>
     </div>    

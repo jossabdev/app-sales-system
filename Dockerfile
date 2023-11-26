@@ -1,5 +1,7 @@
 FROM node:18
 WORKDIR /app
+RUN apt update && apt install tzdata -y
+ENV TZ="America/Guayaquil"
 COPY package*.json ./
 RUN npm ci
 COPY . .

@@ -38,6 +38,10 @@ export class ProductoService {
     return this._httpClient.post<GenericListResponse<Producto>>(this.endpoint +  `${paths.consultarPor}`, producto, {headers: this.httpHeader});
   }
 
+  getByBarCode(producto: Producto) : any{
+    return this._httpClient.post<GenericListResponse<Producto>>(this.endpoint +  `${paths.obtenerProductoEnStockPorCodigoBarras}`, producto, {headers: this.httpHeader});
+  }
+
   getAll(){    
     return this._httpClient.get<GenericListResponse<Producto>>(this.endpoint, { headers: this.httpHeader } )
     .pipe(
@@ -80,6 +84,15 @@ export class ProductoService {
 
   deleteByProducto(producto: Producto): Observable<unknown>{
     return this._httpClient.delete<GenericBasicResponse<Producto>>(this.endpoint + `${paths.eliminarProducto}` , {headers: this.httpHeader, observe: 'response', body: producto } )
-    .pipe();
+    .pipe(
+      map((response: HttpResponse<GenericBasicResponse<any>>) => {
+        if(response.body?.code === 0){
+          return response;                    
+        }else{
+          throw response;
+        }
+        
+      })
+    );
   }
 }

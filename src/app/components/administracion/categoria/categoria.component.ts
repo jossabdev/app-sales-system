@@ -17,6 +17,7 @@ interface EstadosCat { valor?: string };
   providers: [ MessageService, ConfirmationService ]
 })
 export class CategoriaComponent implements OnInit{
+  onlyRoleAdmin: boolean = false;
   displayedColumns: string[] = ['idCategoria', 'nombreCategoria', 'estado']; 
   categorias!: Categoria[] ; 
   formNuevacategoria: FormGroup ;
@@ -40,6 +41,7 @@ export class CategoriaComponent implements OnInit{
   isEditCategoriaDetalle = false;
 
   constructor(private formBuilder: FormBuilder, private categoriaService: CategoriaService, private messageService: MessageService,  private confirmationService: ConfirmationService) {
+    this.onlyRoleAdmin = localStorage.getItem('Rol') === 'Administrador'? true : false;
     this.formNuevacategoria = this.formBuilder.group({
       nombreCategoria: ['', Validators.required],
       estado: [{value: Estados.activo, disabled: true}, Validators.required]
@@ -121,6 +123,7 @@ export class CategoriaComponent implements OnInit{
         console.log(response);   
         this.messageService.add({ severity: 'success', summary: 'Transacción exitosa', detail: 'Categoría guardada correctamente.'});
         console.log(response.headers.keys());
+        this.limpiarFormularioCreacion();
        });    
    }
 

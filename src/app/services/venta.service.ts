@@ -79,4 +79,22 @@ export class VentaService {
   getEstadisticasVentasPorOpcion(opcion: number){
     return this._httpClient.get<GenericBasicResponse<EstadisticaVentaResponse>>(this.endpoint + `${paths.obtenerEstadisticasVentasPorOpcion}` + '/'+ opcion , {headers: this.httpHeader});
   }
+
+  anularVenta(venta: Venta){
+    
+    return this._httpClient.post<GenericBasicResponse<Venta>>(this.endpoint + `${paths.anularVenta}`, venta, {headers: this.httpHeader})
+                    .pipe(
+                      map((response: GenericBasicResponse<any>) => {
+                        if(response.code === 0){
+                          return response;
+                        }else{
+                          throw response;
+                        }
+                      }),
+                    );
+  }
+
+  getTotalInversion(){
+    return this._httpClient.get<GenericBasicResponse<ConsultaVentasResponse>>(this.endpoint + `${paths.obtenerTotalDeInversion}`, {headers: this.httpHeader});
+  }
 }

@@ -97,6 +97,7 @@ td, th {
         height: 2.2rem;
         font-weight: 550;
         font-size: smaller;
+        
     }
 
     .width{
@@ -113,19 +114,19 @@ td, th {
     background: var(--surface-card);    
     padding: 2rem;
     border-radius: 10px;
-    margin: 1.8rem 2.8rem 0 0;
+    margin: 0.2rem 2.8rem 0 0;
 }
 
 ::ng-deep {
     .p-datepicker td>span {
         width: 1.3rem !important;
-        height: 1.2rem !important;
+        height: 1rem !important;
     }
 
 }
 
 ::ng-deep .p-calendar .p-datepicker {
-    min-width: 60%;
+    min-width: 50%;
 }
 
 .btn-2{     
@@ -137,6 +138,17 @@ td, th {
     color: #fff;
 }
 
+.button-add{    
+    background-color: #F31559;
+    color: #fff;
+    font-size: smaller;    
+}
+
+.button-cancel{
+    background-color: #FFB07F;
+    color: #4D091E;
+    font-size: smaller; 
+}
 
 
 :host ::ng-deep .p-dialog .p-dialog-header {
@@ -157,8 +169,17 @@ td, th {
     font-size: 0.9rem;
 }
 
+:host ::ng-deep .p-confirm-dialog .p-dialog-content{
+    background-color: #fff !important;
+}
+
+:host ::ng-deep .p-confirm-dialog .p-dialog-footer{
+    background-color: #fff !important;
+}
+
 .card-table{
     padding: 1.5rem;
+    margin: 1rem;
     border-radius: 10px;
     background-color: #fff;
     border: solid 1px #f3f1f1;
@@ -170,7 +191,7 @@ td, th {
 }
 
 .titulo-h4{
-    margin: 1rem 0;
+    margin: 1rem;
     color: #5d2a3a;
 }
 
@@ -179,4 +200,20 @@ td, th {
 :host ::ng-deep .p-dropdown::selection{ 
     box-shadow: none; 
     border: 2px solid #F31559;    
+}
+
+.venta-rapida-container, .venta-normal-container{
+    background-color: #fff;
+    border: solid 1px #DCDCDC;
+    border-radius: 0.6rem;
+    margin: 0rem 2.8rem 0 0;
+    padding-top: 0.6rem;
+    padding-left: 0.6rem;
+    padding-right: 0.6rem;
+}
+
+
+.btn-color-cancel{
+    background-color: #FFB07F;
+    color: #4D091E;
 }

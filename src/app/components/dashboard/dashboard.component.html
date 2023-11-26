@@ -3,65 +3,92 @@
         <h3 class="h2-color">Dashboard</h3> 
 
         <div class="btn-group">
-            <button pButton pRipple label="Venta rápida" icon="fa-solid fa-circle-dollar-to-slot" class="p-button-text button"></button>
-            <button pButton pRipple label="Venta normal" icon="fa-solid fa-cart-plus" class="p-button-text button"></button>
+            <button pButton pRipple label="Venta" icon="fa-solid fa-circle-dollar-to-slot" class="p-button-text button" routerLink="/ventas" [state]="{venta: 'ventaRapida'}"></button>
+            <!--para una segunda version <button pButton pRipple label="Venta normal" icon="fa-solid fa-cart-plus" class="p-button-text button"></button>-->
         </div>
         
     </div>
-    <div class="container flex justify-content-start flex-wrap">
-        <div class="card-container flex-grow-1">
+    <p-scrollPanel [style]="{ width: '100%', height: '31.5vh'}">
+      <div class="container-resumen">
+        <div class="card-container flex-grow-0">
             <p-card [style]="styleCard">
                 <ng-template pTemplate="header">
-                    <p class="card-title"> {{ totalVentas.header }} </p> 
-                    <p class="card-body"> {{ totalVentas.body | currency:'USD'}} </p>
+                    <div class="flex flex-row justify-content-between align-items-center ml-1 mb-0">
+                        <p class="card-title"> {{ totalVentas.header }} </p> 
+                        <p-button [icon]="iconoMuestraOcultaInfoTotalVenta" [rounded]="false" [text]="true" (click)="changeVisibilityOfEyeIconTotalVentas()"></p-button>
+                    </div>
+                    <p class="card-body ml-1"> {{ (checkedTotalVentas ? (totalVentas.body | currency:'USD') : '*****')}} </p>
                     <p-divider></p-divider>
                     <div class="flex flex-none">
-                        <p-splitButton [label]="mesStrTotalVentas" [model]="this.items" (onClick)="mesTotalVentas === -1 ? seMuestraCalendar = true : getTotalVentasPorMes(mesTotalVentas)" styleClass="p-button-sm p-button-text p-button-secondary mr-2 mb-2"></p-splitButton>                
+                        <p-splitButton appendTo="body" [label]="mesStrTotalVentas" [model]="this.items" (onClick)="mesTotalVentas === -1 ? seMuestraCalendar = true : getTotalVentasPorMes(mesTotalVentas)" styleClass="p-button-sm p-button-text p-button-secondary mr-2 mb-2"></p-splitButton>                
                         <div *ngIf="seMuestraCalendar" class="calendar-width">
-                            <p-calendar [(ngModel)]="rangoFechaTotalVentas" selectionMode="range" dateFormat="yy-mm-dd" [readonlyInput]="true" (onClickOutside)="getTotalVentasPorRangoFecha()"></p-calendar>
+                            <p-calendar appendTo="body" [(ngModel)]="rangoFechaTotalVentas" selectionMode="range" dateFormat="yy-mm-dd" [readonlyInput]="true" (onClickOutside)="getTotalVentasPorRangoFecha()"></p-calendar>
                         </div>
                     </div>
                     
                 </ng-template>
             </p-card>
         </div>   
-        <div class="card-container flex-grow-1">
+        <div class="card-container flex-grow-0">
             <p-card [style]="styleCard">
                 <ng-template pTemplate="header">
-                    <p class="card-title"> {{ totalGanancias.header }} </p> 
-                    <p class="card-body"> {{ totalGanancias.body | currency:'USD'}} </p>
+                    <div class="flex flex-row justify-content-between align-items-center ml-1 mb-0">
+                        <p class="card-title"> {{ totalGanancias.header }} </p> 
+                        <p-button [icon]="iconoMuestraOcultaInfoTotalGanancias" [rounded]="false" [text]="true" (click)="changeVisibilityOfEyeIconTotalGanancias()"></p-button>
+                    </div>                    
+                    <p class="card-body ml-1"> {{ checkedTotalGanancias ? (totalGanancias.body | currency:'USD') : '*****' }} </p>
                     <p-divider></p-divider>
                     <div class="flex flex-none">
-                        <p-splitButton [label]="mesStrTotalGanancias" [model]="this.itemsGanancias" (onClick)="mesTotalGanancias === -1 ? seMuestraCalendarGanancias = true : getTotalGananciasPorMes(mesTotalGanancias)" styleClass="p-button-sm p-button-text p-button-secondary mr-2 mb-2"></p-splitButton>
+                        <p-splitButton  appendTo="body" [label]="mesStrTotalGanancias" [model]="this.itemsGanancias" (onClick)="mesTotalGanancias === -1 ? seMuestraCalendarGanancias = true : getTotalGananciasPorMes(mesTotalGanancias)" styleClass="p-button-sm p-button-text p-button-secondary mr-2 mb-2"></p-splitButton>
                         <div *ngIf="seMuestraCalendarGanancias" class="calendar-width">
-                            <p-calendar [(ngModel)]="rangoFechaTotalGanancias" selectionMode="range" dateFormat="yy-mm-dd" [readonlyInput]="true" (onClickOutside)="getTotalGananciasPorRangoFecha()"></p-calendar>
+                            <p-calendar appendTo="body" [(ngModel)]="rangoFechaTotalGanancias" selectionMode="range" dateFormat="yy-mm-dd" [readonlyInput]="true" (onClickOutside)="getTotalGananciasPorRangoFecha()"></p-calendar>
                         </div>
                     </div>                
                 </ng-template>
             </p-card>
         </div>
-        <div class="card-container flex-grow-1" >
+        <div class="card-container flex-grow-0" >
             <p-card [style]="styleCard">
                 <ng-template pTemplate="header">
-                    <p class="card-title"> {{ productoTop.header }} </p> 
-                    <p class="card-body"> {{ productoTop.body }} </p>
+                    <div class="flex flex-row justify-content-between align-items-center ml-1 mb-0">
+                        <p class="card-title"> {{ productoTop.header }} </p> 
+                        <p-button [icon]="iconoMuestraOcultaInfoProductoTop" [rounded]="false" [text]="true" (click)="changeVisibilityOfEyeIconProductoTop()"></p-button>
+                    </div>                    
+                    <p class="card-body ml-1"> {{ checkedProductoTop ? (productoTop.body) : '*****' }} </p>
                     <p-divider></p-divider>
                     <div class="flex flex-none">
-                        <p-splitButton [label]="mesStrProductoTop" [model]="this.itemsProductos" (onClick)="mesProductoTop === -1 ? seMuestraCalendarProductoTop = true : getProductoTopPorMes(mesProductoTop)" styleClass="p-button-sm p-button-text p-button-secondary mr-2 mb-2"></p-splitButton>
+                        <p-splitButton  appendTo="body" [label]="mesStrProductoTop" [model]="this.itemsProductos" (onClick)="mesProductoTop === -1 ? seMuestraCalendarProductoTop = true : getProductoTopPorMes(mesProductoTop)" styleClass="p-button-sm p-button-text p-button-secondary mr-2 mb-2"></p-splitButton>
                         <div *ngIf="seMuestraCalendarProductoTop" class="calendar-width">
-                            <p-calendar [(ngModel)]="rangoFechaProductoTop" selectionMode="range" dateFormat="yy-mm-dd" [readonlyInput]="true" (onClickOutside)="getProductoTopPorRangoFecha()"></p-calendar>
+                            <p-calendar appendTo="body" [(ngModel)]="rangoFechaProductoTop" selectionMode="range" dateFormat="yy-mm-dd" [readonlyInput]="true" (onClickOutside)="getProductoTopPorRangoFecha()"></p-calendar>
                         </div>
                     </div>
                     
                 </ng-template>
             </p-card>
         </div>
-        
+
+        <div class="card-container flex-grow-0" >
+            <p-card [style]="styleCard">
+                <ng-template pTemplate="header">
+                    <div class="flex flex-row justify-content-between align-items-center ml-1 mb-0">
+                        <p class="card-title"> {{ totalInversion.header }} </p> 
+                        <p-button [icon]="iconoMuestraOcultaInfoTotalInversion" [rounded]="false" [text]="true" (click)="changeVisibilityOfEyeIconTotalInversion()"></p-button>
+                    </div>                    
+                    <p class="card-body ml-1"> {{ checkedTotalInversion ? (totalInversion.body | currency:'USD') : '*****' }} </p>
+                    <p-divider></p-divider>
+                    <div class="flex flex-none">
+                        <p-splitButton  appendTo="body" [label]="mesStrTotalInversion" [model]="this.itemsInversion" (onClick)="getTotalInversion()" styleClass="p-button-sm p-button-text p-button-secondary mr-2 mb-2"></p-splitButton>                        
+                    </div>
+                    
+                </ng-template>
+            </p-card>
+        </div>
     </div>
+</p-scrollPanel>
     
-    <div class="container flex flex-wrap">
+    <div class="container flex flex-wrap mt-2">
         <!-- Card donde se muestra listado de ventas -->
-        <div class="card-container flex-grow-1 w-27rem">
+        <div class="card-container flex-grow-0 w-27rem">
             <p-card [style]="styleVentaCard">
                 <ng-template pTemplate="header">
                     <p-splitButton [label]="labelVentas" [model]="this.itemsVentas" styleClass="p-button-sm p-button-text p-button-secondary mr-2 mb-2"></p-splitButton>                
@@ -80,9 +107,9 @@
             </p-card>
         </div> 
         
-       
+        
         <div class="chart-container flex-grow-1">
-            <p-chart #chart type="line" class="flex-auto" height="100%" width="98%"  [data]="data" [options]="options"></p-chart>
+            <p-chart #chart type="line" class="flex-auto" height="100%" width="97%"  [data]="data" [options]="options"></p-chart>
             <span class="p-buttonset align-self-end absolute group-button">
                 <button pButton pRipple label="6 meses" class="p-button-sm p-button-outlined p-button-secondary border-gray-300" (click)="obtenerEstadisticasVentas(1)"></button>
                 <button pButton pRipple label="30 días" class="p-button-sm  p-button-outlined p-button-secondary border-gray-300" (click)="obtenerEstadisticasVentas(2)"></button>
@@ -91,7 +118,7 @@
             
         </div>
             
-       
+        
         
     </div>
 </div>
